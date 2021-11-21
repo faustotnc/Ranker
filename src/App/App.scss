@@ -1,0 +1,26 @@
+@import "../helper.scss";
+
+$sidebar-width: 325px;
+$r-vector-width: 400 - $sidebar-width;
+
+div.App {
+   width: 100%;
+   padding-top: 48px;
+   height: calc(100vh - 48px);
+
+   @include flex(flex-start, row);
+
+   div.sidebar {
+      width: $sidebar-width;
+      border-radius: 0;
+   }
+
+   div.graph-viz {
+      width: calc(100% - #{$sidebar-width} - #{$r-vector-width});
+   }
+
+   div.r-vector {
+      width: $r-vector-width;
+      border-radius: 0;
+   }
+}
