@@ -12,4 +12,18 @@ div.graphView {
    div.node-info-bar, div.graph-controls-bar {
       height: $bar-height;
    }
+
+   div.graph-controls-bar {
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      border-radius: 0;
+   }
+
+   div.node-info-bar {
+      border-bottom: none;
+      border-left: none;
+      border-right: none;
+      border-radius: 0;
+   }
 }

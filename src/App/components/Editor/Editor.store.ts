@@ -1,38 +1,40 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
+export interface SingleInputNode {
+   name: string;
+   children: string;
+}
+
 // Define a type for the slice state
-interface CounterState {
-   value: number
- }
+interface editorSliceState {
+   nodes: SingleInputNode[];
+}
 
- // Define the initial state using that type
- const initialState: CounterState = {
-   value: 0,
- }
+// Define the initial state using that type
+const initialState: editorSliceState = {
+   nodes: [],
+};
 
-export const counterSlice = createSlice({
-   name: "counter",
-   initialState: {
-      value: 0,
-   },
+export const editorSlice = createSlice({
+   name: "editor",
+   initialState,
    reducers: {
-      increment: (state) => {
-         // Redux Toolkit allows us to write "mutating" logic in reducers. It
-         // doesn't actually mutate the state because it uses the Immer library,
-         // which detects changes to a "draft state" and produces a brand new
-         // immutable state based off those changes
-         state.value += 1;
+      addNode: (state) => {
+         state.nodes.push({ name: "", children: "" });
       },
-      decrement: (state) => {
-         state.value -= 1;
+      removeNode: (state, action: PayloadAction<number>) => {
+         state.nodes.splice(action.payload, 1);
       },
-      incrementByAmount: (state, action: PayloadAction<number>) => {
-         state.value += action.payload;
+      updateNode: (state, action: PayloadAction<{ id: number } & SingleInputNode>) => {
+         state.nodes[action.payload.id] = { name: action.payload.name, children: action.payload.children };
       },
    },
 });
 
 // Action creators are generated for each case reducer function
-export const { increment, decrement, incrementByAmount } = counterSlice.actions;
+export const { addNode, removeNode, updateNode } = editorSlice.actions;
 
-export default counterSlice.reducer;
+// Other code such as selectors can use the imported `RootState` type
+// export const selectNodes = (state: RootState) => state.counter.nodes;
+
+export default editorSlice.reducer;

@@ -5,10 +5,16 @@ export interface AdjacencyListEntry<T> {
    to: T[];
 }
 
+export type AdjacencyList<T> = AdjacencyListEntry<T>[];
+
 export class Network<T> {
    private nodeTable;
 
-   constructor(list: AdjacencyListEntry<T>[]) {
+   constructor(list: AdjacencyList<T>) {
+      this.nodeTable = new NodeTable(list);
+   }
+
+   public updateWith(list: AdjacencyList<T>) {
       this.nodeTable = new NodeTable(list);
    }
 

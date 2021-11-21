@@ -4,7 +4,8 @@ import Graph from "./components/GraphView/GraphView";
 
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { darkTheme, lightTheme } from "../theme";
-import { Paper, AppBar, Toolbar, Typography, Box } from "@mui/material";
+import { Paper, AppBar, Toolbar, Typography, Box, IconButton } from "@mui/material";
+import SettingsIcon from "@mui/icons-material/Settings";
 
 interface AppProps {}
 
@@ -27,7 +28,10 @@ const App: React.FC<AppProps> = () => {
                   <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
                      Ranker
                   </Typography>
-                  {/* <Button color="inherit">Login</Button> */}
+
+                  <IconButton>
+                     <SettingsIcon />
+                  </IconButton>
                </Toolbar>
             </Paper>
          </AppBar>
@@ -38,7 +42,7 @@ const App: React.FC<AppProps> = () => {
                <Editor></Editor>
             </Paper>
 
-            {/* ---------- THE GRAB VIEW ---------- */}
+            {/* ---------- THE GRAPH VIEW ---------- */}
             <Paper
                variant="outlined"
                elevation={0}
