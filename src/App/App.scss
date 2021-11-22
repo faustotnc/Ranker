@@ -1,12 +1,12 @@
 @import "../helper.scss";
 
 $sidebar-width: 325px;
-$r-vector-width: 400 - $sidebar-width;
+$r-vector-width: 112px;
 
 div.App {
    width: 100%;
    padding-top: 48px;
-   height: calc(100vh - 48px);
+   height: 100vh;
 
    @include flex(flex-start, row);
 
@@ -19,7 +19,7 @@ div.App {
       width: calc(100% - #{$sidebar-width} - #{$r-vector-width});
    }
 
-   div.r-vector {
+   div.r-vector-wrapper {
       width: $r-vector-width;
       border-radius: 0;
    }

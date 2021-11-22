@@ -15,11 +15,10 @@ export const NODE_COLORS = ColorMap({
 
 export const getColorCode = (p: number, min: number, max: number) => {
    // Interpolates the probabilities such that the smallest probability maps to
-   // the 0th color, while the largest probability maps to the 100th color.
-   const [y1, y2] = [25, 85];
-
-   let interpolated_prob = 50;
+   // the y1-th color, while the largest probability maps to the y2-th color.
+   let interpolated_prob = 40;
    if (max - min > 0) {
+      const [y1, y2] = [20, 90];
       let m = (y2 - y1) / (max - min);
       interpolated_prob = m * p + y1 - m * min;
    }
@@ -29,6 +28,18 @@ export const getColorCode = (p: number, min: number, max: number) => {
       // Change "65" to be 15% above the range of y1 and y1
       fg: interpolated_prob >= 65 ? "white" : "black",
    };
+};
+
+export const getSize = (p: number, min: number, max: number) => {
+   let interpolated_size = 40;
+   const [y1, y2] = [32, 48];
+
+   if (max - min > 0) {
+      let m = (y2 - y1) / (max - min);
+      interpolated_size = m * p + y1 - m * min;
+   }
+
+   return [interpolated_size, interpolated_size];
 };
 
 export class NetworkGraph {
@@ -67,8 +78,8 @@ export class NetworkGraph {
             {
                selector: "node",
                style: {
-                  width: 24,
-                  height: 24,
+                  width: 38,
+                  height: 38,
                   "background-color": "#5b9a9c",
                   label: "data(id)",
                   "text-valign": "center",
@@ -132,6 +143,10 @@ export class NetworkGraph {
          let color = getColorCode(prob[node.id()] * 100, min, max);
          node.style("background-color", color.bg);
          node.style("color", color.fg);
+
+         let size = getSize(prob[node.id()] * 100, min, max);
+         node.style("width", size);
+         node.style("height", size);
       });
    }
 
@@ -143,6 +158,7 @@ export class NetworkGraph {
             randomize: true,
             fit: false,
             // @ts-ignore
+            edgeLength: 150,
             maxSimulationTime: 30000, // 20 seconds
          })
          .run();

@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AdjacencyList, Network, PowerIterator } from "../../../PageRank";
 import { RootState } from "../../store";
+import { SingleInputNode } from "../Editor/Editor.store";
 
 // Define a type for the slice state
 interface GraphViewSliceState<T> {
@@ -30,13 +31,43 @@ export const graphViewSlice = createSlice({
       updateProbabilities: (state, action: PayloadAction<{ [key: string]: number }>) => {
          state.probVector = action.payload;
       },
+      updateNetworkFromNodeList: (state, action: PayloadAction<SingleInputNode[]>) => {
+         let discoverdNodes: { [key: string]: number } = {}; // used to compute initial prob vector.
+         let nodeList: AdjacencyList<string> = [];
+
+         action.payload.forEach((node) => {
+            if (node.name.length == 0) return;
+
+            discoverdNodes[node.name] = 0;
+            let children: string[] = [];
+
+            (node.children || "").split(",").forEach((n) => {
+               let child = n.trim();
+
+               if (child.length > 0) {
+                  discoverdNodes[child] = 0;
+                  children.push(child);
+               }
+            });
+
+            nodeList.push({
+               from: node.name,
+               to: children,
+            });
+         });
+
+         console.log(nodeList);
+
+         let nodes = Object.keys(discoverdNodes);
+         nodes.forEach((node) => (discoverdNodes[node] = 1 / nodes.length));
+
+         state.adjacencyList = nodeList;
+         state.probVector = discoverdNodes;
+      },
    },
 });
 
 // Action creators are generated for each case reducer function
-export const { updateNetwork, updateProbabilities } = graphViewSlice.actions;
-
-// Other code such as selectors can use the imported `RootState` type
-// export const selectNodes = (state: RootState) => state.counter.nodes;
+export const { updateNetwork, updateProbabilities, updateNetworkFromNodeList } = graphViewSlice.actions;
 
 export default graphViewSlice.reducer;

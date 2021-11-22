@@ -22,6 +22,9 @@ export const editorSlice = createSlice({
       addNode: (state) => {
          state.nodes.push({ name: "", children: "" });
       },
+      addNamedNode: (state, action: PayloadAction<SingleInputNode>) => {
+         state.nodes.push(action.payload);
+      },
       removeNode: (state, action: PayloadAction<number>) => {
          state.nodes.splice(action.payload, 1);
       },
@@ -32,7 +35,7 @@ export const editorSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { addNode, removeNode, updateNode } = editorSlice.actions;
+export const { addNode, addNamedNode, removeNode, updateNode } = editorSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 // export const selectNodes = (state: RootState) => state.counter.nodes;

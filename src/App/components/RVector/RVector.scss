@@ -1,0 +1,95 @@
+
+$cell-width: 40px;
+$cell-height: 40px;
+
+$title-sliver: 24px;
+
+div.vector-super-wrapper {
+   width: 100%;
+   height: 100%;
+   font-family: 'Fira Code', monospace;
+
+   div.section-title {
+      width: $title-sliver;
+      position: relative;
+
+      span {
+         display: block;
+         width: fit-content;
+         position: absolute;
+         top: 50%;
+         left: -125%;
+         white-space: nowrap;
+         transform: rotate(-90deg) translateY(-150%);
+         font-size: 11px;
+         opacity: 0.7;
+      }
+   }
+
+   div.vector-container {
+      width: calc(100% - #{$title-sliver});
+      height: 100%;
+      overflow-y: auto;
+      padding: 32px 0;
+      position: relative;
+
+      div.r-vector {
+         width: fit-content;
+         height: 100%;
+         display: table;
+
+         div.vector {
+            overflow-y: auto;
+            margin: 16px 0;
+            display: table-cell;
+            text-align: center;
+            vertical-align: middle;
+
+            div.cell {
+               overflow: hidden;
+               margin-bottom: 4px;
+
+               div.cell-value {
+                  width: $cell-width;
+                  height: $cell-height;
+                  font-size: 10px;
+                  line-height: $cell-height;
+                  cursor: pointer;
+               }
+
+               span {
+                  font-size: 12px;
+                  display: inline-block;
+                  margin-left: 8px;
+               }
+
+               &.vector-symbol-cell {
+                  height: fit-content;
+
+                  div.cell-value {
+                     height: 32px;
+
+                     img {
+                        width: 40%;
+                     }
+                  }
+               }
+
+               &:nth-child(2) {
+                  div.cell-value {
+                     border-top-left-radius: 6px;
+                     border-top-right-radius: 6px;
+                  }
+               }
+
+               &:last-of-type {
+                  div.cell-value {
+                     border-bottom-left-radius: 6px;
+                     border-bottom-right-radius: 6px;
+                  }
+               }
+            }
+         }
+      }
+   }
+}

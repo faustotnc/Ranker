@@ -7,39 +7,28 @@ import "./GraphView.scss";
 import { updateProbabilities } from "./GraphView.store";
 import NodeInfo from "./NodeInfo/NodeInfo";
 
-// function doPowerIteration(network: Network<string>) {
-//    const r = new Array(network.dim).fill(1 / network.dim);
-//    const powerIterator = new PowerIterator(network.toColumnStochastic(), r);
-//    let prob: { [key: string]: number } = {};
-//    powerIterator.doPowerIteration(10000).forEach((p, idx) => {
-//       prob[network.getNode(idx)] = +(p * 100).toFixed(2);
-//    });
-//    return prob;
-// }
-
 // { from: "y", to: ["y", "a"] },
 // { from: "a", to: ["y", "m"] },
 // { from: "m", to: ["a"] },
 // --------------------------
-// { from: "A", to: [] },
-// { from: "B", to: ["C", "A"] },
-// { from: "C", to: ["B"] },
-// { from: "D", to: ["A", "B"] },
-// { from: "E", to: ["D", "B", "F"] },
-// { from: "F", to: ["E", "B"] },
-// { from: "H", to: ["B", "E"] },
-// { from: "I", to: ["B", "E"] },
-// { from: "J", to: ["B", "E"] },
-// { from: "K", to: ["F"] },
-// { from: "L", to: ["F"] },
-// { from: "M", to: ["M", "N"] },
-// { from: "N", to: ["M", "O", "E"] },
-// { from: "O", to: ["O", "F"] },
+// A ->
+// B -> C, A
+// C -> B
+// D -> A, B
+// E -> D, B, F
+// F -> E, B
+// H -> B, E
+// I -> B, E
+// J -> B, E
+// K -> F
+// L -> F
+// M -> M, N
+// N -> M, O, E
+// O -> O, F
 // --------------------------
 // { from: "A", to: ["A", "B", "C"] },
 // { from: "B", to: ["C"] },
 // { from: "C", to: ["A"] },
-
 // A -> A, B, C, D
 // M -> A, C, K, D
 // P -> O, A, B, R
@@ -55,13 +44,6 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
    let network = new Network<string>([]);
    let cytoGraph = new NetworkGraph();
    let powerIterator = new PowerIterator([[]], []);
-
-   /**
-    * Executed when the component is first mounted onto its parent.
-    */
-   useEffect(() => {
-      // Create a graph if there are query parameters.
-   }, []);
 
    /**
     * Executed every time the network is updated
@@ -83,6 +65,7 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
 
       // Reset the power iterator
       powerIterator = new PowerIterator(network.toColumnStochastic(), Object.values(baseProb));
+      // console.log("first")
    }, [graphAdjacencyList]);
 
    const handleNextPowerIter = () => {
@@ -92,6 +75,7 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
       network.getNodes().forEach((node, idx) => (prob[node] = newR[idx]));
       dispatch(updateProbabilities(prob));
       cytoGraph.updateProb(prob);
+      console.log(prob);
    };
 
    const handleRerunGraph = () => {

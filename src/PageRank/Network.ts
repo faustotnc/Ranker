@@ -92,7 +92,7 @@ export class Network<T> {
       // return di > 0 ? hasLink / di : 1 / this.dim;
 
       // Google's PageRank with Teleport
-      let beta = 0.85;
+      let beta = 0.8;
       let base = di > 0 ? beta * (hasLink / di) + (1 - beta) / this.nodeTable.dim : 1 / this.dim;
       return base;
    }
