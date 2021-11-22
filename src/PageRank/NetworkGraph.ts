@@ -6,6 +6,31 @@ import ColorMap from "colormap";
 import * as cola from "cytoscape-cola";
 cytoscape.use(cola);
 
+export const NODE_COLORS = ColorMap({
+   colormap: "greens",
+   nshades: 101,
+   format: "hex",
+   alpha: 1,
+}).reverse();
+
+export const getColorCode = (p: number, min: number, max: number) => {
+   // Interpolates the probabilities such that the smallest probability maps to
+   // the 0th color, while the largest probability maps to the 100th color.
+   const [y1, y2] = [25, 85];
+
+   let interpolated_prob = 50;
+   if (max - min > 0) {
+      let m = (y2 - y1) / (max - min);
+      interpolated_prob = m * p + y1 - m * min;
+   }
+
+   return {
+      bg: NODE_COLORS[Math.round(interpolated_prob)],
+      // Change "65" to be 15% above the range of y1 and y1
+      fg: interpolated_prob >= 65 ? "white" : "black",
+   };
+};
+
 export class NetworkGraph {
    public cytoGraph: cytoscape.Core;
    private hasMounted = false;
@@ -67,9 +92,11 @@ export class NetworkGraph {
    }
 
    public addNetwork(edges: [string, string][], prob: { [key: string]: number }) {
-      let { colorList, range, min } = this.computeColors(Object.values(prob));
+      let min = Math.min(...Object.values(prob)) * 100;
+      let max = Math.max(...Object.values(prob)) * 100;
 
       let discovered: string[] = [];
+
       const discoverNode = (node: string) => {
          discovered.push(node);
 
@@ -77,9 +104,9 @@ export class NetworkGraph {
             data: { id: node },
          });
 
-         let p = prob[node] * 100 - min;
-         n.style("background-color", colorList[Math.round(p)]);
-         if (p / range >= 0.65) n.style("color", "white");
+         let color = getColorCode(prob[n.id()] * 100, min, max);
+         n.style("background-color", color.bg);
+         n.style("color", color.fg);
       };
 
       edges.forEach((edge) => {
@@ -98,12 +125,13 @@ export class NetworkGraph {
    }
 
    public updateProb(prob: { [key: string]: number }) {
-      let { colorList, range, min } = this.computeColors(Object.values(prob));
+      let min = Math.min(...Object.values(prob)) * 100;
+      let max = Math.max(...Object.values(prob)) * 100;
 
       this.cytoGraph.nodes().forEach((node) => {
-         let p = prob[node.id()] * 100 - min;
-         node.style("background-color", colorList[Math.round(p)]);
-         if (p / range >= 0.65) node.style("color", "white");
+         let color = getColorCode(prob[node.id()] * 100, min, max);
+         node.style("background-color", color.bg);
+         node.style("color", color.fg);
       });
    }
 
@@ -118,31 +146,5 @@ export class NetworkGraph {
             maxSimulationTime: 30000, // 20 seconds
          })
          .run();
-   }
-
-   private computeColors(prob: number[]) {
-      prob = prob.map((p) => p * 100);
-
-      let min = Infinity;
-      let max = 0;
-
-      prob.forEach((p) => {
-         if (p < min) min = p;
-         if (p > max) max = p;
-      });
-
-      let range = Math.round(max) - Math.round(min);
-
-      return {
-         min,
-         max,
-         range,
-         colorList: ColorMap({
-            colormap: "greens",
-            nshades: range >= 10 ? range + 1 : 10,
-            format: "hex",
-            alpha: 1,
-         }).reverse(),
-      };
    }
 }
