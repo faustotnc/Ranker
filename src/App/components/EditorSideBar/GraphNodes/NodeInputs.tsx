@@ -31,8 +31,6 @@ const NodeInputs: React.FC<NodeInputsProps> = (props: NodeInputsProps) => {
       );
    };
 
-   console.log(nodeList)
-
    let elements = nodeList.map((node, idx) => (
       <Box className="node" key={idx} sx={{ display: "grid", gridTemplateColumns: "34px 1.5fr 4fr", gap: 1 }}>
          <IconButton
@@ -40,6 +38,7 @@ const NodeInputs: React.FC<NodeInputsProps> = (props: NodeInputsProps) => {
             size="small"
             className="delete-button"
             onClick={() => dispatch(removeNode(idx))}
+            color="primary"
          >
             <DeleteIcon />
          </IconButton>

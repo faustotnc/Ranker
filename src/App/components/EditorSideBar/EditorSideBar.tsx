@@ -1,5 +1,5 @@
 import * as React from "react";
-import "./Editor.scss";
+import "./EditorSideBar.scss";
 import GraphNodes from "./GraphNodes/GraphNodes";
 
 interface EditorProps {}

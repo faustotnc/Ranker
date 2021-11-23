@@ -4,7 +4,7 @@ import "./index.scss";
 import App from "./App/App";
 import reportWebVitals from "./reportWebVitals";
 
-import { store } from "./App/store";
+import { store } from "./store";
 import { Provider } from "react-redux";
 
 ReactDOM.render(

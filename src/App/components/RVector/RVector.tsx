@@ -1,4 +1,5 @@
 import { Box } from "@mui/system";
+import { useTheme } from "@mui/material/styles";
 import * as React from "react";
 import { getColorCode } from "../../../PageRank";
 import { useAppSelector } from "../../hooks";
@@ -7,6 +8,7 @@ import "./RVector.scss";
 interface RVectorProps {}
 
 const RVector: React.FC<RVectorProps> = () => {
+   let currentTheme = useTheme();
    let prob = useAppSelector((state) => state.graphView.probVector);
 
    let cells = Object.entries(prob).map((p) => {
@@ -24,6 +26,11 @@ const RVector: React.FC<RVectorProps> = () => {
       );
    });
 
+   let vectorMathImage =
+      currentTheme.palette.mode === "light"
+         ? "https://chart.apis.google.com/chart?cht=tx&chl=%5Cvec%7Br%7D%20&chf=bg%2Cs%2CFFFFFF80&chco=000000&chs=50"
+         : "https://chart.apis.google.com/chart?cht=tx&chl=%5Cvec%7Br%7D%20&chf=bg%2Cs%2C202226&chco=FFFFFF&chs=50";
+
    return (
       <Box className="vector-super-wrapper" sx={{ display: "flex", flexDirection: "row" }}>
          <div className="section-title">
@@ -35,7 +42,7 @@ const RVector: React.FC<RVectorProps> = () => {
                <div className="vector">
                   <Box className="cell vector-symbol-cell" key="0">
                      <Box className="cell-value">
-                        <img src="https://chart.apis.google.com/chart?cht=tx&chl=%5Cvec%7Br%7D%20&chf=bg%2Cs%2CFFFFFF80&chco=000000&chs=100"></img>
+                        <img src={vectorMathImage} alt="r"></img>
                      </Box>
                   </Box>
 

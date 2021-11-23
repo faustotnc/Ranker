@@ -1,44 +1,48 @@
-import "./App.scss";
-import Editor from "./components/Editor/Editor";
-import Graph from "./components/GraphView/GraphView";
-
+import { useEffect, useMemo } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { darkTheme, lightTheme } from "../theme";
-import { Paper, AppBar, Toolbar, Typography, Box, IconButton } from "@mui/material";
-import SettingsIcon from "@mui/icons-material/Settings";
-import RVector from "./components/RVector/RVector";
-import { useEffect } from "react";
-import { useAppDispatch } from "./hooks";
-import { addNamedNode, SingleInputNode } from "./components/Editor/Editor.store";
+import { getDesignTokens } from "./theme";
+import { Paper, Box, PaletteMode } from "@mui/material";
+import { useAppDispatch, useAppSelector } from "./hooks";
+import { addNamedNode, SingleInputNode } from "./components/EditorSideBar/Editor.store";
 import { updateNetworkFromNodeList } from "./components/GraphView/GraphView.store";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import "./App.scss";
 
-const getQueryStringParams = () => {
-   let raw = window.location.search;
-   let qs = /^[?#]/.test(raw) ? raw.slice(1) : raw;
-
-   let params: { [key: string]: any } = {};
-   qs.split("&").forEach((param) => {
-      let [key, value] = param.split("=");
-      params[key] = value ? decodeURIComponent(value.replace(/\+/g, " ")) : "";
-   });
-
-   return params;
-};
+// Sub-components
+import Editor from "./components/EditorSideBar/EditorSideBar";
+import Graph from "./components/GraphView/GraphView";
+import RVector from "./components/RVector/RVector";
+import Header from "./components/Header/Header";
+import { calculateTrueViewportHeight, getQueryStringParams } from "./utils";
 
 interface AppProps {}
 
 const App: React.FC<AppProps> = () => {
-   const theme = createTheme(lightTheme);
    const dispatch = useAppDispatch();
+   const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
+   const themeMode = useAppSelector((state) => state.appSettings.currentTheme);
 
-   useEffect(() => {
+   // Update the theme only if the mode changes
+   const themePalette = useMemo(() => {
+      let palette: PaletteMode;
+
+      if (themeMode === "auto") {
+         palette = prefersDarkMode ? "dark" : "light";
+      } else {
+         palette = themeMode;
+      }
+
+      return createTheme(getDesignTokens(palette));
+   }, [themeMode, prefersDarkMode]);
+
+   const composeGraphFromQuery = () => {
       let queryGraphNodes: SingleInputNode[] = [];
 
       (getQueryStringParams().graph || "").split(";").forEach((paramNode: string) => {
          let [from, to] = paramNode.split(":");
 
          // If the node's name is an empty string, then we don't add it to the graph
-         if (from.length == 0 || to.length == 0) return;
+         if (from.length === 0 || to.length === 0) return;
 
          let node = { name: from, children: to };
          dispatch(addNamedNode(node));
@@ -46,31 +50,20 @@ const App: React.FC<AppProps> = () => {
       });
 
       if (queryGraphNodes.length > 0) dispatch(updateNetworkFromNodeList(queryGraphNodes));
+   };
+
+   useEffect(() => {
+      // Initial Calculation right after the viewport is resized
+      window.addEventListener("resize", () => {
+         calculateTrueViewportHeight();
+      });
+
+      composeGraphFromQuery();
    }, []);
 
    return (
-      <ThemeProvider theme={theme}>
-         <AppBar position="fixed" elevation={0} color="transparent" className="appBar">
-            <Paper
-               variant="outlined"
-               elevation={0}
-               sx={{ borderRadius: 0, borderTop: 0, borderLeft: 0, borderRight: 0 }}
-               className="graph-viz"
-            >
-               <Toolbar variant="dense">
-                  {/* <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-                     <MenuIcon />
-                  </IconButton> */}
-                  <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-                     Ranker
-                  </Typography>
-
-                  <IconButton>
-                     <SettingsIcon />
-                  </IconButton>
-               </Toolbar>
-            </Paper>
-         </AppBar>
+      <ThemeProvider theme={themePalette}>
+         <Header></Header>
 
          <Box className="App">
             {/* ---------- THE SIDE BAR ---------- */}

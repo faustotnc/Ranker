@@ -65,6 +65,7 @@ div.vector-super-wrapper {
 
                &.vector-symbol-cell {
                   height: fit-content;
+                  pointer-events: none;
 
                   div.cell-value {
                      height: 32px;

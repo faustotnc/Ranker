@@ -1,11 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
-import editorReducer from "./components/Editor/Editor.store";
-import graphViewReducer from "./components/GraphView/GraphView.store";
+import appSettingsReducer from "./App/AppSettings.store";
+import editorReducer from "./App/components/EditorSideBar/Editor.store";
+import graphViewReducer from "./App/components/GraphView/GraphView.store";
 
 export const store = configureStore({
    reducer: {
       editor: editorReducer,
       graphView: graphViewReducer,
+      appSettings: appSettingsReducer,
    },
 });
 

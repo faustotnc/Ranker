@@ -5,8 +5,7 @@ import { Box } from "@mui/system";
 import NodeInputs from "./NodeInputs";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 import { addNode } from "../Editor.store";
-import { updateNetwork, updateNetworkFromNodeList } from "../../GraphView/GraphView.store";
-import { AdjacencyList } from "../../../../PageRank";
+import {updateNetworkFromNodeList } from "../../GraphView/GraphView.store";
 
 interface GraphNodesProps {}
 

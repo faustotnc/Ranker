@@ -1,4 +1,3 @@
-import { Network, PowerIterator } from ".";
 import cytoscape from "cytoscape";
 import ColorMap from "colormap";
 
@@ -156,11 +155,51 @@ export class NetworkGraph {
             name: "cola",
             animate: true,
             randomize: true,
-            fit: false,
+            fit: true,
             // @ts-ignore
             edgeLength: 150,
             maxSimulationTime: 30000, // 20 seconds
+            padding: 72,
          })
          .run();
+   }
+
+   public clear() {
+      this.cytoGraph.elements().remove();
+   }
+
+   public center() {
+      this.cytoGraph.center();
+   }
+
+   public fit() {
+      this.cytoGraph.animate({
+         fit: {
+            padding: 72,
+            eles: this.cytoGraph.elements(),
+         },
+         duration: 750,
+         easing: "ease-out-expo",
+      });
+   }
+
+   public zoomIn() {
+      this.cytoGraph.zoom({
+         level: this.cytoGraph.zoom() + 0.1,
+         renderedPosition: {
+            x: this.cytoGraph.width() / 2,
+            y: this.cytoGraph.height() / 2,
+         },
+      });
+   }
+
+   public zoomOut() {
+      this.cytoGraph.zoom({
+         level: this.cytoGraph.zoom() - 0.1,
+         renderedPosition: {
+            x: this.cytoGraph.width() / 2,
+            y: this.cytoGraph.height() / 2,
+         },
+      });
    }
 }

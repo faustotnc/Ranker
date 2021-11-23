@@ -1,7 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AdjacencyList, Network, PowerIterator } from "../../../PageRank";
-import { RootState } from "../../store";
-import { SingleInputNode } from "../Editor/Editor.store";
+import { AdjacencyList } from "../../../PageRank";
+import { SingleInputNode } from "../EditorSideBar/Editor.store";
 
 // Define a type for the slice state
 interface GraphViewSliceState<T> {
@@ -36,7 +35,7 @@ export const graphViewSlice = createSlice({
          let nodeList: AdjacencyList<string> = [];
 
          action.payload.forEach((node) => {
-            if (node.name.length == 0) return;
+            if (node.name.length === 0) return;
 
             discoverdNodes[node.name] = 0;
             let children: string[] = [];

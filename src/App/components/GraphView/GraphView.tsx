@@ -41,45 +41,51 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
    let dispatch = useAppDispatch();
 
    // Initialize the network, cytoscape graph, and power iterator.
-   let network = new Network<string>([]);
-   let cytoGraph = new NetworkGraph();
-   let powerIterator = new PowerIterator([[]], []);
+   let network = useRef(new Network<string>([]));
+   let cytoGraph = useRef(new NetworkGraph());
+   let powerIterator = useRef(new PowerIterator([[]], []));
+
+   useEffect(() => {
+      cytoGraph.current.mountOn(cyContainer.current!);
+   }, [cyContainer]);
 
    /**
     * Executed every time the network is updated
     */
    useEffect(() => {
       // Create the network and cyto-graph
-      network.updateWith(graphAdjacencyList);
-      cytoGraph.mountOn(cyContainer.current!);
+      network.current.updateWith(graphAdjacencyList);
 
       // Create the base probability vector (r).
-      let nodes = network.getNodes();
+      let nodes = network.current.getNodes();
       let baseProb: { [key: string]: number } = {};
       nodes.forEach((node) => {
          baseProb[node] = 1 / nodes.length;
       });
 
       // Display the graph
-      cytoGraph.addNetwork(network.getEdges(), baseProb).rerun();
+      cytoGraph.current.clear();
+      cytoGraph.current.addNetwork(network.current.getEdges(), baseProb).rerun();
 
       // Reset the power iterator
-      powerIterator = new PowerIterator(network.toColumnStochastic(), Object.values(baseProb));
-      // console.log("first")
+      powerIterator.current = new PowerIterator(
+         network.current.toColumnStochastic(),
+         Object.values(baseProb)
+      );
    }, [graphAdjacencyList]);
 
    const handleNextPowerIter = () => {
-      let newR = powerIterator.next();
+      let newR = powerIterator.current.next();
       let prob: { [key: string]: number } = {};
 
-      network.getNodes().forEach((node, idx) => (prob[node] = newR[idx]));
+      network.current.getNodes().forEach((node, idx) => (prob[node] = newR[idx]));
+
       dispatch(updateProbabilities(prob));
-      cytoGraph.updateProb(prob);
-      console.log(prob);
+      cytoGraph.current.updateProb(prob);
    };
 
    const handleRerunGraph = () => {
-      cytoGraph.rerun();
+      cytoGraph.current.rerun();
    };
 
    return (
@@ -88,6 +94,9 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
             <GraphControls
                onRerunGraph={handleRerunGraph}
                onNextPowerIter={handleNextPowerIter}
+               onFitGraph={() => cytoGraph.current.fit()}
+               onZoomIn={() => cytoGraph.current.zoomIn()}
+               onZoomOut={() => cytoGraph.current.zoomOut()}
             ></GraphControls>
          </Paper>
 

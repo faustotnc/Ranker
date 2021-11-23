@@ -1,4 +1,4 @@
-import { Button, Icon, IconButton, Tooltip } from "@mui/material";
+import { Button, IconButton, Tooltip } from "@mui/material";
 import { Box } from "@mui/system";
 import * as React from "react";
 import "./GraphControls.scss";
@@ -15,6 +15,9 @@ import FitScreenIcon from "@mui/icons-material/FitScreen";
 interface GraphControlsProps {
    onNextPowerIter: () => void;
    onRerunGraph: () => void;
+   onFitGraph: () => void;
+   onZoomIn: () => void;
+   onZoomOut: () => void;
 }
 
 const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) => {
@@ -31,7 +34,7 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
       >
          <Box className="power-icons">
             <Tooltip title="Reset Graph">
-               <IconButton aria-label="delete" onClick={() => props.onRerunGraph()}>
+               <IconButton aria-label="delete" onClick={() => props.onRerunGraph()} color="primary">
                   <RefreshIcon />
                </IconButton>
             </Tooltip>
@@ -66,19 +69,19 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
 
          <Box>
             <Tooltip title="Fit Graph">
-               <IconButton aria-label="delete">
+               <IconButton aria-label="fit graph" color="primary" onClick={() => props.onFitGraph()}>
                   <FitScreenIcon />
                </IconButton>
             </Tooltip>
 
             <Tooltip title="Zoom In">
-               <IconButton aria-label="delete">
+               <IconButton aria-label="zoom in" color="primary" onClick={() => props.onZoomIn()}>
                   <ZoomInIcon />
                </IconButton>
             </Tooltip>
 
             <Tooltip title="Zoom Out">
-               <IconButton aria-label="delete">
+               <IconButton aria-label="zoom out" color="primary"  onClick={() => props.onZoomOut()}>
                   <ZoomOutIcon />
                </IconButton>
             </Tooltip>
