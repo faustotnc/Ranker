@@ -3,25 +3,45 @@
 $sidebar-width: 325px;
 $r-vector-width: 112px;
 
+div.editor-drawer {
+   .MuiDrawer-paper {
+      box-sizing: border-box;
+      width: 80%;
+      max-width: $sidebar-width;
+      overflow: hidden;
+   }
+
+   @media screen and (min-width: 1201px) {
+      display: none;
+   }
+}
+
 div.App {
    width: 100%;
    padding-top: 48px;
    height: 100vh;
    height: calc(var(--vh, 1vh) * 100);
 
-   @include flex(flex-start, row);
-
    div.sidebar {
       width: $sidebar-width;
       border-radius: 0;
-   }
-
-   div.graph-viz {
-      width: calc(100% - #{$sidebar-width} - #{$r-vector-width});
+      height: 100;
    }
 
    div.r-vector-wrapper {
       width: $r-vector-width;
       border-radius: 0;
+   }
+
+   @media screen and (max-width: 1200px) {
+      div.sidebar {
+         display: none;
+      }
+   }
+
+   @media screen and (max-width: 850px) {
+      div.r-vector-wrapper {
+         display: none;
+      }
    }
 }

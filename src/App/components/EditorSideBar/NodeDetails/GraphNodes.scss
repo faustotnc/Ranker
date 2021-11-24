@@ -1,0 +1,22 @@
+div.node-list {
+   div.node {
+      button.delete-button {
+         margin-top: -4px;
+      }
+
+      input {
+         height: unset;
+         line-height: 14px;
+         padding-top: 4px;
+         padding-bottom: 4px;
+         font-family: 'Fira Code', monospace;
+      }
+
+      margin-bottom: 4px;
+   }
+
+   button.add-node {
+      margin-top: 16px;
+      margin-right: 8px;
+   }
+}

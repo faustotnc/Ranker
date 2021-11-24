@@ -1,15 +1,17 @@
-import * as React from "react";
-import "./NodeInputs.scss";
+import React from "react";
+import "./GraphNodes.scss";
+import { Button } from "@mui/material";
+import { addNode } from "../Editor.store";
 import { Box, IconButton, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { removeNode, updateNode } from "../Editor.store";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 
-interface NodeInputsProps {}
+interface NodeDetailsProps {}
 
-const NodeInputs: React.FC<NodeInputsProps> = (props: NodeInputsProps) => {
-   const nodeList = useAppSelector((state) => state.editor.nodes);
+const NodeDetails: React.FC<NodeDetailsProps> = (props: NodeDetailsProps) => {
    const dispatch = useAppDispatch();
+   const nodeList = useAppSelector((state) => state.editor.nodes);
 
    const handleChangeNodeName = (event: React.BaseSyntheticEvent, idx: number, prevChildren: string) => {
       dispatch(
@@ -31,7 +33,7 @@ const NodeInputs: React.FC<NodeInputsProps> = (props: NodeInputsProps) => {
       );
    };
 
-   let elements = nodeList.map((node, idx) => (
+   let nodeInputs = nodeList.map((node, idx) => (
       <Box className="node" key={idx} sx={{ display: "grid", gridTemplateColumns: "34px 1.5fr 4fr", gap: 1 }}>
          <IconButton
             aria-label="delete"
@@ -63,7 +65,21 @@ const NodeInputs: React.FC<NodeInputsProps> = (props: NodeInputsProps) => {
       </Box>
    ));
 
-   return <>{elements}</>;
+   return (
+      <Box className="node-list">
+         <div>{nodeInputs}</div>
+
+         <Button
+            size="small"
+            variant="contained"
+            disableElevation
+            className="rounded add-node"
+            onClick={() => dispatch(addNode())}
+         >
+            Add Node
+         </Button>
+      </Box>
+   );
 };
 
-export default NodeInputs;
+export default NodeDetails;

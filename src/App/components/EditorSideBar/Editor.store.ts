@@ -5,14 +5,22 @@ export interface SingleInputNode {
    children: string;
 }
 
+export enum RankAlgorithm {
+   Simple,
+   Stochastic,
+   Google,
+}
+
 // Define a type for the slice state
 interface editorSliceState {
    nodes: SingleInputNode[];
+   rankAlgo: RankAlgorithm;
 }
 
 // Define the initial state using that type
 const initialState: editorSliceState = {
    nodes: [],
+   rankAlgo: RankAlgorithm.Simple,
 };
 
 export const editorSlice = createSlice({
@@ -31,11 +39,14 @@ export const editorSlice = createSlice({
       updateNode: (state, action: PayloadAction<{ id: number } & SingleInputNode>) => {
          state.nodes[action.payload.id] = { name: action.payload.name, children: action.payload.children };
       },
+      setRankAlgo: (state, action: PayloadAction<RankAlgorithm>) => {
+         state.rankAlgo = action.payload;
+      },
    },
 });
 
 // Action creators are generated for each case reducer function
-export const { addNode, addNamedNode, removeNode, updateNode } = editorSlice.actions;
+export const { addNode, addNamedNode, removeNode, updateNode, setRankAlgo } = editorSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
 // export const selectNodes = (state: RootState) => state.counter.nodes;

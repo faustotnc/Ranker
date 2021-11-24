@@ -4,6 +4,7 @@
         "cyto",
         "cytoscape",
         "Highcharts",
+        "katex",
         "networkgraph",
         "nshades",
         "viridis"

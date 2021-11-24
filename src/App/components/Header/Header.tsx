@@ -1,13 +1,15 @@
 import React from "react";
-import { AppBar, IconButton, Paper, Toolbar, Typography, SvgIcon, Button } from "@mui/material";
+import { AppBar, IconButton, Paper, Toolbar, Typography, SvgIcon, Button, Box } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import BrightIcon from "@mui/icons-material/Brightness7";
 import DarkIcon from "@mui/icons-material/Brightness4";
 import BrightnessAutoIcon from "@mui/icons-material/BrightnessAuto";
+import ShareIcon from "@mui/icons-material/IosShare";
+import InfoIcon from "@mui/icons-material/Info";
 import Logo from "../../../Full-Logo05x.png";
 import "./Header.scss";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import { rotateTheme } from "../../AppSettings.store";
+import { rotateTheme, toggleOpenEditor } from "../../AppSettings.store";
 
 interface HeaderProps {}
 
@@ -25,7 +27,13 @@ const Header: React.FC<HeaderProps> = () => {
       );
 
    return (
-      <AppBar position="fixed" elevation={0} color="transparent" className="appBar">
+      <AppBar
+         position="fixed"
+         elevation={0}
+         color="transparent"
+         className="app-bar"
+         sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
          <Paper
             variant="outlined"
             elevation={0}
@@ -33,7 +41,14 @@ const Header: React.FC<HeaderProps> = () => {
             className="graph-viz"
          >
             <Toolbar variant="dense">
-               <IconButton edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
+               <IconButton
+                  edge="start"
+                  color="inherit"
+                  aria-label="menu"
+                  sx={{ mr: 2 }}
+                  onClick={() => dispatch(toggleOpenEditor())}
+                  className="menu-icon"
+               >
                   <MenuIcon />
                </IconButton>
 
@@ -43,11 +58,22 @@ const Header: React.FC<HeaderProps> = () => {
                   Ranker
                </Typography>
 
-               <div className="right-buttons">
-                  <IconButton color="primary">
-                     <SvgIcon viewBox="0 0 32 32">
-                        <path d="M16 0.395c-8.836 0-16 7.163-16 16 0 7.069 4.585 13.067 10.942 15.182 0.8 0.148 1.094-0.347 1.094-0.77 0-0.381-0.015-1.642-0.022-2.979-4.452 0.968-5.391-1.888-5.391-1.888-0.728-1.849-1.776-2.341-1.776-2.341-1.452-0.993 0.11-0.973 0.11-0.973 1.606 0.113 2.452 1.649 2.452 1.649 1.427 2.446 3.743 1.739 4.656 1.33 0.143-1.034 0.558-1.74 1.016-2.14-3.554-0.404-7.29-1.777-7.29-7.907 0-1.747 0.625-3.174 1.649-4.295-0.166-0.403-0.714-2.030 0.155-4.234 0 0 1.344-0.43 4.401 1.64 1.276-0.355 2.645-0.532 4.005-0.539 1.359 0.006 2.729 0.184 4.008 0.539 3.054-2.070 4.395-1.64 4.395-1.64 0.871 2.204 0.323 3.831 0.157 4.234 1.026 1.12 1.647 2.548 1.647 4.295 0 6.145-3.743 7.498-7.306 7.895 0.574 0.497 1.085 1.47 1.085 2.963 0 2.141-0.019 3.864-0.019 4.391 0 0.426 0.288 0.925 1.099 0.768 6.354-2.118 10.933-8.113 10.933-15.18 0-8.837-7.164-16-16-16z"></path>
+               <Box
+                  className="right-buttons"
+                  sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}
+               >
+                  <IconButton color="primary" className="no-mobile">
+                     <ShareIcon />
+                  </IconButton>
+
+                  <IconButton color="primary" className="no-mobile">
+                     <SvgIcon id="icon-github" viewBox="0 0 16 16">
+                        <path d="M8 0.198c-4.418 0-8 3.582-8 8 0 3.535 2.292 6.533 5.471 7.591 0.4 0.074 0.547-0.174 0.547-0.385 0-0.191-0.008-0.821-0.011-1.489-2.226 0.484-2.695-0.944-2.695-0.944-0.364-0.925-0.888-1.171-0.888-1.171-0.726-0.497 0.055-0.486 0.055-0.486 0.803 0.056 1.226 0.824 1.226 0.824 0.714 1.223 1.872 0.869 2.328 0.665 0.072-0.517 0.279-0.87 0.508-1.070-1.777-0.202-3.645-0.888-3.645-3.954 0-0.873 0.313-1.587 0.824-2.147-0.083-0.202-0.357-1.015 0.077-2.117 0 0 0.672-0.215 2.201 0.82 0.638-0.177 1.322-0.266 2.002-0.269 0.68 0.003 1.365 0.092 2.004 0.269 1.527-1.035 2.198-0.82 2.198-0.82 0.435 1.102 0.162 1.916 0.079 2.117 0.513 0.56 0.823 1.274 0.823 2.147 0 3.073-1.872 3.749-3.653 3.947 0.287 0.248 0.543 0.735 0.543 1.481 0 1.070-0.009 1.932-0.009 2.195 0 0.213 0.144 0.462 0.55 0.384 3.177-1.059 5.466-4.057 5.466-7.59 0-4.418-3.582-8-8-8z"></path>
                      </SvgIcon>
+                  </IconButton>
+
+                  <IconButton color="primary">
+                     <InfoIcon />
                   </IconButton>
 
                   <Button
@@ -60,7 +86,7 @@ const Header: React.FC<HeaderProps> = () => {
                   >
                      {currentTheme}
                   </Button>
-               </div>
+               </Box>
             </Toolbar>
          </Paper>
       </AppBar>

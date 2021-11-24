@@ -1,4 +1,15 @@
 
+.app-bar {
+   @media screen and (max-width: 1200px) {
+      z-index: 1100 !important;
+   }
+}
+
+button.menu-icon {
+   @media screen and (min-width: 1201px) {
+      display: none !important;
+   }
+}
 
 img.logo {
    height: 36px;
@@ -8,10 +19,24 @@ img.logo {
 
 div.app-name {
    font-family: 'Fira Code', monospace;
+
+   @media screen and (max-width: 500px) {
+      display: none;
+   }
 }
 
 div.right-buttons {
    button {
       margin-left: 8px;
+
+      &.no-mobile {
+         @media screen and (max-width: 400px) {
+            display: none;
+         }
+      }
+   }
+
+   @media screen and (max-width: 500px) {
+      flex-grow: 1;
    }
 }

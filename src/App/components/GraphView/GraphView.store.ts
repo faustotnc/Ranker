@@ -30,6 +30,13 @@ export const graphViewSlice = createSlice({
       updateProbabilities: (state, action: PayloadAction<{ [key: string]: number }>) => {
          state.probVector = action.payload;
       },
+      resetProbabilities: (state) => {
+         let keys = Object.keys(state.probVector);
+
+         keys.forEach((key) => {
+            state.probVector[key] = 1 / keys.length;
+         });
+      },
       updateNetworkFromNodeList: (state, action: PayloadAction<SingleInputNode[]>) => {
          let discoverdNodes: { [key: string]: number } = {}; // used to compute initial prob vector.
          let nodeList: AdjacencyList<string> = [];
@@ -67,6 +74,7 @@ export const graphViewSlice = createSlice({
 });
 
 // Action creators are generated for each case reducer function
-export const { updateNetwork, updateProbabilities, updateNetworkFromNodeList } = graphViewSlice.actions;
+export const { updateNetwork, updateProbabilities, updateNetworkFromNodeList, resetProbabilities } =
+   graphViewSlice.actions;
 
 export default graphViewSlice.reducer;

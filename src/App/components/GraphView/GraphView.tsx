@@ -4,7 +4,7 @@ import { Network, NetworkGraph, PowerIterator } from "../../../PageRank";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import GraphControls from "./GraphControls/GraphControls";
 import "./GraphView.scss";
-import { updateProbabilities } from "./GraphView.store";
+import { resetProbabilities, updateProbabilities } from "./GraphView.store";
 import NodeInfo from "./NodeInfo/NodeInfo";
 
 // { from: "y", to: ["y", "a"] },
@@ -38,6 +38,7 @@ interface GraphViewProps {}
 const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
    let cyContainer = useRef(null);
    let graphAdjacencyList = useAppSelector((state) => state.graphView.adjacencyList);
+   let probVector = useAppSelector((state) => state.graphView.probVector);
    let dispatch = useAppDispatch();
 
    // Initialize the network, cytoscape graph, and power iterator.
@@ -74,6 +75,10 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
       );
    }, [graphAdjacencyList]);
 
+   useEffect(() => {
+      cytoGraph.current.updateProb(probVector);
+   }, [probVector]);
+
    const handleNextPowerIter = () => {
       let newR = powerIterator.current.next();
       let prob: { [key: string]: number } = {};
@@ -81,11 +86,14 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
       network.current.getNodes().forEach((node, idx) => (prob[node] = newR[idx]));
 
       dispatch(updateProbabilities(prob));
-      cytoGraph.current.updateProb(prob);
    };
 
    const handleRerunGraph = () => {
       cytoGraph.current.rerun();
+   };
+
+   const handleRestartPowerIter = () => {
+      dispatch(resetProbabilities());
    };
 
    return (
@@ -97,10 +105,11 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
                onFitGraph={() => cytoGraph.current.fit()}
                onZoomIn={() => cytoGraph.current.zoomIn()}
                onZoomOut={() => cytoGraph.current.zoomOut()}
+               onRestartPowerIteration={() => handleRestartPowerIter()}
             ></GraphControls>
          </Paper>
 
-         <Paper elevation={0} sx={{ boxShadow: "none" }} className="graphContainer" ref={cyContainer}></Paper>
+         <Paper elevation={0} sx={{ boxShadow: "none" }} className="graph-container" ref={cyContainer}></Paper>
 
          <Paper variant="outlined" elevation={0} className="node-info-bar">
             <NodeInfo></NodeInfo>

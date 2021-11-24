@@ -20,5 +20,29 @@ div.node-info {
       span {
          opacity: 0.8;
       }
+
+      &.rank {
+         @media screen and (max-width: 275px) {
+            display: none;
+         }
+      }
+
+      &.parents {
+         @media screen and (max-width: 750px) {
+            display: none;
+         }
+      }
+
+      &.children {
+         @media screen and (max-width: 500px) {
+            display: none;
+         }
+      }
+
+      &.retention {
+         @media screen and (max-width: 1000px) {
+            display: none;
+         }
+      }
    }
 }

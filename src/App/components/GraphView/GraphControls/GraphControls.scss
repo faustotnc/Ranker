@@ -6,5 +6,37 @@ div.graph-controls {
       button {
          margin-right: 12px;
       }
+
+      @media screen and (max-width: 375px) {
+         .no-xs-screen {
+            display: none;
+         }
+      }
+
+      @media screen and (min-width: 375px) {
+         .no-desktop {
+            display: none;
+         }
+      }
+   }
+
+   div.view-icons {
+      div.full-buttons {
+         button {
+            margin-left: 12px;
+         }
+
+         @media screen and (max-width: 650px) {
+            display: none;
+         }
+      }
+
+      div.menu-buttons {
+         display: none;
+
+         @media screen and (max-width: 650px) {
+            display: block;
+         }
+      }
    }
 }
