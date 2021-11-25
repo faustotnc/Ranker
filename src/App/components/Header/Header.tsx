@@ -18,13 +18,7 @@ const Header: React.FC<HeaderProps> = () => {
    let currentTheme = useAppSelector((state) => state.appSettings.currentTheme);
 
    let themeIcon =
-      currentTheme === "light" ? (
-         <BrightIcon />
-      ) : currentTheme === "auto" ? (
-         <BrightnessAutoIcon />
-      ) : (
-         <DarkIcon />
-      );
+      currentTheme === "light" ? <BrightIcon /> : currentTheme === "auto" ? <BrightnessAutoIcon /> : <DarkIcon />;
 
    return (
       <AppBar

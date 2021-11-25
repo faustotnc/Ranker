@@ -41,11 +41,12 @@ export const graphViewSlice = createSlice({
          let discoverdNodes: { [key: string]: number } = {}; // used to compute initial prob vector.
          let nodeList: AdjacencyList<string> = [];
 
+         let parents: { [key: string]: number } = {};
          action.payload.forEach((node) => {
             if (node.name.length === 0) return;
+            let children: string[] = [];
 
             discoverdNodes[node.name] = 0;
-            let children: string[] = [];
 
             (node.children || "").split(",").forEach((n) => {
                let child = n.trim();
@@ -56,13 +57,18 @@ export const graphViewSlice = createSlice({
                }
             });
 
-            nodeList.push({
-               from: node.name,
-               to: children,
-            });
-         });
+            let parentNames = Object.keys(parents);
 
-         console.log(nodeList);
+            if (!parentNames.includes(node.name)) {
+               parents[node.name] =
+                  nodeList.push({
+                     from: node.name,
+                     to: children,
+                  }) - 1;
+            } else {
+               nodeList[parents[node.name]].to = [...nodeList[parents[node.name]].to, ...children];
+            }
+         });
 
          let nodes = Object.keys(discoverdNodes);
          nodes.forEach((node) => (discoverdNodes[node] = 1 / nodes.length));

@@ -4,20 +4,23 @@ import "./EditorSideBar.scss";
 import NodeDetails from "./NodeDetails/GraphNodes";
 import { updateNetworkFromNodeList } from "../GraphView/GraphView.store";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import SelectRankAlgo from "./SelectRankAlgo/SelectRankAlgo";
+import SelectMatrixFormula from "./SelecMatrixFormula/SelectMatrixFormula";
 import BackIcon from "@mui/icons-material/NavigateBefore";
 import { toggleOpenEditor } from "../../AppSettings.store";
 import AdjustPowerIter from "./AdjustPowerIter/AdjustPowerIter";
+import { setGraphHasBeenUpdated } from "./Editor.store";
 
 interface EditorProps {}
 
 const Editor: React.FC<EditorProps> = () => {
    const dispatch = useAppDispatch();
    const nodeList = useAppSelector((state) => state.editor.nodes);
+   const graphSettingsHaveChanged = useAppSelector((state) => state.editor.hasChanged);
 
    const handleUpdateGraph = (e: any) => {
       e.preventDefault();
       dispatch(updateNetworkFromNodeList(nodeList));
+      dispatch(setGraphHasBeenUpdated())
    };
 
    return (
@@ -36,7 +39,14 @@ const Editor: React.FC<EditorProps> = () => {
                </Box>
 
                <div>
-                  <Button size="small" variant="contained" disableElevation className="rounded" type="submit">
+                  <Button
+                     size="small"
+                     variant="contained"
+                     disableElevation
+                     className="rounded"
+                     type="submit"
+                     disabled={!graphSettingsHaveChanged}
+                  >
                      Update Graph
                   </Button>
 
@@ -65,8 +75,8 @@ const Editor: React.FC<EditorProps> = () => {
                   <NodeDetails></NodeDetails>
 
                   <Typography variant="caption" component="p" sx={{ mt: "16px" }} className="caption-text">
-                     <b>NOTE:</b> A node will only be rendered if there exists an edge between that node and
-                     itself, or between that node and another node.
+                     <b>NOTE:</b> A node will only be rendered if there exists an edge between that node and itself, or
+                     between that node and another node.
                   </Typography>
                </div>
 
@@ -74,15 +84,15 @@ const Editor: React.FC<EditorProps> = () => {
 
                <div className="editor-section">
                   <Typography variant="subtitle1" component="p" className="section-title">
-                     Rank Algorithm
+                     Matrix Formulation
                   </Typography>
 
                   <Typography variant="caption" component="p" className="section-description caption-text">
-                     Select the algorithm used to compute the column-stochastic matrix. This matrix will
-                     represent the network as a set of flow equations.
+                     Select the method used to compute the column-stochastic matrix. This matrix will represent the
+                     network as a set of flow equations.
                   </Typography>
 
-                  <SelectRankAlgo></SelectRankAlgo>
+                  <SelectMatrixFormula></SelectMatrixFormula>
                </div>
 
                <Divider />

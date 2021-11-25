@@ -1,4 +1,5 @@
 import { NodeTable } from ".";
+import { MatrixFormula } from "../App/components/EditorSideBar/Editor.store";
 
 export interface AdjacencyListEntry<T> {
    from: T;
@@ -8,22 +9,20 @@ export interface AdjacencyListEntry<T> {
 export type AdjacencyList<T> = AdjacencyListEntry<T>[];
 
 export class Network<T> {
+   private matrixFormula: MatrixFormula = MatrixFormula.Simple;
    private nodeTable;
 
    constructor(list: AdjacencyList<T>) {
       this.nodeTable = new NodeTable(list);
    }
 
-   public updateWith(list: AdjacencyList<T>) {
+   public updateWith(list: AdjacencyList<T>, mAlgo: MatrixFormula) {
       this.nodeTable = new NodeTable(list);
+      this.matrixFormula = mAlgo;
    }
 
    public get dim() {
       return this.nodeTable.dim;
-   }
-
-   public getNode(idx: number) {
-      return this.nodeTable.getNode(idx);
    }
 
    /**
@@ -40,7 +39,8 @@ export class Network<T> {
     * @returns An array of nodes that are all connected to this child.
     */
    public getParentsOf(j: T | number) {
-      return this.nodeTable.getParentsOf(j);
+      let nodeName = typeof j === "number" ? this.nodeTable.getNodes()[j] : j;
+      return this.nodeTable.getParentsOf(nodeName);
    }
 
    /**
@@ -49,7 +49,8 @@ export class Network<T> {
     * @returns An array of nodes that are all children of this node.
     */
    public getChildrenOf(i: T | number) {
-      return this.nodeTable.getChildrenOf(i);
+      let nodeName = typeof i === "number" ? this.nodeTable.getNodes()[i] : i;
+      return this.nodeTable.getChildrenOf(nodeName);
    }
 
    public getEdges() {
@@ -69,31 +70,13 @@ export class Network<T> {
     * @returns A column-stochastic, 2D-matrix representation of the network.
     */
    public toColumnStochastic() {
-      let dim = this.dim;
-      let matrix: number[][] = new Array(dim).fill(0).map((_) => new Array(dim).fill(0));
-
-      for (let i = 0; i < dim; i++) {
-         for (let j = 0; j < dim; j++) {
-            let hasLink = Number(this.nodeTable.hasLink(i, j));
-            let di = this.getChildrenOf(i).length;
-
-            matrix[j][i] = this.computeColStochasticEntry(hasLink, di);
-         }
+      switch (this.matrixFormula) {
+         case MatrixFormula.Google:
+            return this.nodeTable.computeGoogleColStochastic(0.8);
+         case MatrixFormula.Stochastic:
+            return this.nodeTable.trueColStochasticMatrix;
+         default:
+            return this.nodeTable.semiColStochasticMatrix;
       }
-
-      return matrix;
-   }
-
-   private computeColStochasticEntry(hasLink: number, di: number) {
-      // Basic Page Rank
-      // return di > 0 ? hasLink / di : 0;
-
-      // True Column-Stochastic Page Rank:  rj = SUM_(i->j)[ri / di]
-      // return di > 0 ? hasLink / di : 1 / this.dim;
-
-      // Google's PageRank with Teleport
-      let beta = 0.8;
-      let base = di > 0 ? beta * (hasLink / di) + (1 - beta) / this.nodeTable.dim : 1 / this.dim;
-      return base;
    }
 }

@@ -1,5 +1,5 @@
 import { Box, Paper } from "@mui/material";
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Network, NetworkGraph, PowerIterator } from "../../../PageRank";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import GraphControls from "./GraphControls/GraphControls";
@@ -36,10 +36,14 @@ import NodeInfo from "./NodeInfo/NodeInfo";
 interface GraphViewProps {}
 
 const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
+   let dispatch = useAppDispatch();
    let cyContainer = useRef(null);
    let graphAdjacencyList = useAppSelector((state) => state.graphView.adjacencyList);
    let probVector = useAppSelector((state) => state.graphView.probVector);
-   let dispatch = useAppDispatch();
+   let currentMatrixFormula = useAppSelector((state) => state.editor.matrixFormula);
+   let currentPowerIterSpeed = useAppSelector((state) => state.editor.iterSpeed);
+   let [powerIterControl, setPowerIterControl] = useState<"started" | "paused">("paused");
+   let [powerIterTimer, setPowerIterTimer] = useState<number>(-1);
 
    // Initialize the network, cytoscape graph, and power iterator.
    let network = useRef(new Network<string>([]));
@@ -55,7 +59,7 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
     */
    useEffect(() => {
       // Create the network and cyto-graph
-      network.current.updateWith(graphAdjacencyList);
+      network.current.updateWith(graphAdjacencyList, currentMatrixFormula);
 
       // Create the base probability vector (r).
       let nodes = network.current.getNodes();
@@ -69,20 +73,21 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
       cytoGraph.current.addNetwork(network.current.getEdges(), baseProb).rerun();
 
       // Reset the power iterator
-      powerIterator.current = new PowerIterator(
-         network.current.toColumnStochastic(),
-         Object.values(baseProb)
-      );
+      powerIterator.current = new PowerIterator(network.current.toColumnStochastic(), Object.values(baseProb));
    }, [graphAdjacencyList]);
 
    useEffect(() => {
       cytoGraph.current.updateProb(probVector);
+
+      // Reset the power iterator
+      powerIterator.current = new PowerIterator(network.current.toColumnStochastic(), Object.values(probVector));
+
+      
    }, [probVector]);
 
    const handleNextPowerIter = () => {
       let newR = powerIterator.current.next();
       let prob: { [key: string]: number } = {};
-
       network.current.getNodes().forEach((node, idx) => (prob[node] = newR[idx]));
 
       dispatch(updateProbabilities(prob));
@@ -96,6 +101,21 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
       dispatch(resetProbabilities());
    };
 
+   const handleStartPausePowerIter = () => {
+      if (powerIterControl === "started") {
+         setPowerIterControl("paused");
+         window.clearTimeout(powerIterTimer);
+      } else {
+         setPowerIterControl("started");
+
+         let timer = window.setInterval(() => {
+            handleNextPowerIter();
+         }, currentPowerIterSpeed * 1000);
+
+         setPowerIterTimer(timer);
+      }
+   };
+
    return (
       <Box className="graphView" height="100%" sx={{ display: "flex", flexDirection: "column" }}>
          <Paper variant="outlined" elevation={0} className="graph-controls-bar">
@@ -106,6 +126,7 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
                onZoomIn={() => cytoGraph.current.zoomIn()}
                onZoomOut={() => cytoGraph.current.zoomOut()}
                onRestartPowerIteration={() => handleRestartPowerIter()}
+               onStartPausePowerIter={() => handleStartPausePowerIter()}
             ></GraphControls>
          </Paper>
 

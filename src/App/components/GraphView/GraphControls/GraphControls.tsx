@@ -1,11 +1,13 @@
 import { Button, IconButton, ListItemIcon, ListItemText, Menu, MenuItem, Tooltip } from "@mui/material";
 import { Box } from "@mui/system";
 import * as React from "react";
+import { useState } from "react";
 import "./GraphControls.scss";
 
 // ICONS
 import NextIcon from "@mui/icons-material/NextPlan";
 import PlayIcon from "@mui/icons-material/PlayArrow";
+import PauseIcon from "@mui/icons-material/Pause";
 import RefreshIcon from "@mui/icons-material/SettingsBackupRestore";
 import RestartIcon from "@mui/icons-material/RestartAlt";
 import MoreIcon from "@mui/icons-material/MoreVert";
@@ -21,11 +23,14 @@ interface GraphControlsProps {
    onZoomIn: () => void;
    onZoomOut: () => void;
    onRestartPowerIteration: () => void;
+   onStartPausePowerIter: () => void;
 }
 
 const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) => {
    const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
    const open = Boolean(anchorEl);
+   let [startedPowerIter, setStartedPowerIter] = useState<boolean>(false);
+
    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       setAnchorEl(event.currentTarget);
    };
@@ -52,22 +57,21 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
             </Tooltip>
 
             <Tooltip title="Restart Power Iteration">
-               <IconButton
-                  aria-label="delete"
-                  onClick={() => props.onRestartPowerIteration()}
-                  color="primary"
-               >
+               <IconButton aria-label="delete" onClick={() => props.onRestartPowerIteration()} color="primary">
                   <RestartIcon />
                </IconButton>
             </Tooltip>
 
-            <Tooltip title="Start Power Iteration">
+            <Tooltip title={`${startedPowerIter ? "Pause" : "Play"} Power Iteration`}>
                <IconButton
-                  aria-label="delete"
-                  // onClick={() => props.onRestartPowerIteration()}
+                  aria-label="Start/Pause Power Iteration"
+                  onClick={() => {
+                     setStartedPowerIter(!startedPowerIter);
+                     props.onStartPausePowerIter();
+                  }}
                   color="primary"
                >
-                  <PlayIcon />
+                  {startedPowerIter ? <PauseIcon /> : <PlayIcon />}
                </IconButton>
             </Tooltip>
 
@@ -86,11 +90,7 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
             </Tooltip>
 
             <Tooltip title="Next Iteration" className="no-desktop">
-               <IconButton
-                  aria-label="next iteration"
-                  onClick={() => props.onNextPowerIter()}
-                  color="primary"
-               >
+               <IconButton aria-label="next iteration" onClick={() => props.onNextPowerIter()} color="primary">
                   <NextIcon />
                </IconButton>
             </Tooltip>

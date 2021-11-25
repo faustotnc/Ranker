@@ -19,7 +19,7 @@ const RVector: React.FC<RVectorProps> = () => {
       return (
          <Box className="cell" sx={{ display: "flex", alignItems: "center" }} key={p[0]}>
             <Box className="cell-value" sx={{ color: color.fg, backgroundColor: color.bg }}>
-               {+(p[1] * 100).toFixed(1)}
+               {+(p[1] * 100).toFixed(3)}
             </Box>
             <span className="cell-name">{p[0]}</span>
          </Box>

@@ -1,7 +1,7 @@
 import { useEffect, useMemo } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getDesignTokens } from "./theme";
-import { Paper, Box, PaletteMode, CssBaseline, Drawer } from "@mui/material";
+import { Paper, Box, PaletteMode, Drawer } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import { addNamedNode, SingleInputNode } from "./components/EditorSideBar/Editor.store";
 import { updateNetworkFromNodeList } from "./components/GraphView/GraphView.store";
@@ -67,7 +67,7 @@ const App: React.FC<AppProps> = () => {
 
    return (
       <ThemeProvider theme={themePalette}>
-         <CssBaseline></CssBaseline>
+         {/* <CssBaseline></CssBaseline> */}
 
          <Header></Header>
 
