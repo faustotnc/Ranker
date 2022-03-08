@@ -1,86 +1,54 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AdjacencyList } from "../../../PageRank";
-import { SingleInputNode } from "../EditorSideBar/Editor.store";
+import { RootState } from "../../../store";
+import { StringNumberPairs } from "../../utils";
+import { GraphSettingsData, MatrixFormula } from "../EditorSideBar/Editor.store";
 
 // Define a type for the slice state
-interface GraphViewSliceState<T> {
-   adjacencyList: AdjacencyList<T>;
-   probVector: { [key: string]: number };
+interface GraphViewSliceState {
+   graphSettingsData: GraphSettingsData;
+   probVector: StringNumberPairs;
+   powerIterIsRunning: boolean;
 }
 
-interface UpdateNetworkPayload {
-   list: AdjacencyList<string>;
-   prob: { [key: string]: number };
-}
-
-// Define the initial state using that type
-const initialState: GraphViewSliceState<string> = {
-   adjacencyList: [],
+// Define the initial state of the store
+const initialState: GraphViewSliceState = {
+   graphSettingsData: {
+      graph: [],
+      matrixFormula: MatrixFormula.Simple,
+      maxIter: 0,
+      iterSpeed: 0
+   },
    probVector: {},
+   powerIterIsRunning: false
 };
 
 export const graphViewSlice = createSlice({
    name: "editor",
    initialState,
    reducers: {
-      updateNetwork: (state, action: PayloadAction<UpdateNetworkPayload>) => {
-         state.adjacencyList = action.payload.list;
-         state.probVector = action.payload.prob;
+      setGraphSettingsData: (state, action: PayloadAction<GraphSettingsData>) => {
+         state.graphSettingsData = action.payload;
+         // state.powerIterIsRunning = false;
       },
-      updateProbabilities: (state, action: PayloadAction<{ [key: string]: number }>) => {
+      setProbVector: (state, action: PayloadAction<StringNumberPairs>) => {
          state.probVector = action.payload;
       },
-      resetProbabilities: (state) => {
-         let keys = Object.keys(state.probVector);
-
-         keys.forEach((key) => {
-            state.probVector[key] = 1 / keys.length;
-         });
-      },
-      updateNetworkFromNodeList: (state, action: PayloadAction<SingleInputNode[]>) => {
-         let discoverdNodes: { [key: string]: number } = {}; // used to compute initial prob vector.
-         let nodeList: AdjacencyList<string> = [];
-
-         let parents: { [key: string]: number } = {};
-         action.payload.forEach((node) => {
-            if (node.name.length === 0) return;
-            let children: string[] = [];
-
-            discoverdNodes[node.name] = 0;
-
-            (node.children || "").split(",").forEach((n) => {
-               let child = n.trim();
-
-               if (child.length > 0) {
-                  discoverdNodes[child] = 0;
-                  children.push(child);
-               }
-            });
-
-            let parentNames = Object.keys(parents);
-
-            if (!parentNames.includes(node.name)) {
-               parents[node.name] =
-                  nodeList.push({
-                     from: node.name,
-                     to: children,
-                  }) - 1;
-            } else {
-               nodeList[parents[node.name]].to = [...nodeList[parents[node.name]].to, ...children];
-            }
-         });
-
-         let nodes = Object.keys(discoverdNodes);
-         nodes.forEach((node) => (discoverdNodes[node] = 1 / nodes.length));
-
-         state.adjacencyList = nodeList;
-         state.probVector = discoverdNodes;
-      },
+      setPowerIterIsRunning: (state, action: PayloadAction<boolean>) => {
+         state.powerIterIsRunning = action.payload;
+      }
    },
 });
 
 // Action creators are generated for each case reducer function
-export const { updateNetwork, updateProbabilities, updateNetworkFromNodeList, resetProbabilities } =
-   graphViewSlice.actions;
+export const {
+   setGraphSettingsData,
+   setProbVector,
+   setPowerIterIsRunning
+} = graphViewSlice.actions;
+
+export const selectGraphSettingsData = (state: RootState) => state.graphView.graphSettingsData;
+export const selectProbVector = (state: RootState) => state.graphView.probVector;
+export const selectPowerIterIsRunning = (state: RootState) => state.graphView.powerIterIsRunning;
 
 export default graphViewSlice.reducer;

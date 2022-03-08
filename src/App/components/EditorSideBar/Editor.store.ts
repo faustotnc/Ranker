@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { AdjacencyList } from "../../../PageRank";
 import { RootState } from "../../../store";
 
 export interface SingleInputNode {
@@ -10,6 +11,15 @@ export enum MatrixFormula {
    Simple,
    Stochastic,
    Google,
+}
+
+// The data structure passed to the GraphView every time
+// the user clicks the "Update Graph" button.
+export interface GraphSettingsData {
+   graph: AdjacencyList<string>,
+   matrixFormula: MatrixFormula;
+   maxIter: number;
+   iterSpeed: number;
 }
 
 // Define a type for the slice state
@@ -62,7 +72,7 @@ export const editorSlice = createSlice({
          state.iterSpeed = action.payload;
          state.hasChanged = true;
       },
-      setGraphHasBeenUpdated: (state) => {
+      setChangesHaveExecuted: (state) => {
          state.hasChanged = false;
       },
    },
@@ -77,10 +87,18 @@ export const {
    setMatrixFormula,
    setMaxIter,
    setIterSpeed,
-   setGraphHasBeenUpdated,
+   setChangesHaveExecuted,
 } = editorSlice.actions;
 
 // Other code such as selectors can use the imported `RootState` type
-// export const selectMatrixFormula = (state: RootState) => state.editor.matrixFormula;
+export const selectMatrixFormula = (state: RootState) => state.editor.matrixFormula;
+export const selectMaxIter = (state: RootState) => state.editor.maxIter;
+export const selectIterSpeed = (state: RootState) => state.editor.iterSpeed;
+export const selectSettingsHaveChanged = (state: RootState) => state.editor.hasChanged;
+export const selectNodeList = (state: RootState) => state.editor.nodes;
 
 export default editorSlice.reducer;
+
+export const getGraphSettings = () => {
+   console.log("Settings")
+}

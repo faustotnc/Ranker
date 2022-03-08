@@ -1,3 +1,8 @@
+import { AdjacencyList } from "../PageRank";
+import { SingleInputNode } from "./components/EditorSideBar/Editor.store";
+
+export type StringNumberPairs = { [key: string]: number };
+
 export const calculateTrueViewportHeight = () => {
    // First we get the viewport height and we multiply it by 1% to get a value for one vh unit
    const vh = document.documentElement.clientHeight * 0.01;
@@ -37,4 +42,33 @@ export const getCookie = (cname: string) => {
    }
 
    return "";
+};
+
+export const generateAdjListFromInput = (stringNodes: SingleInputNode[]) => {
+   let nodeList: AdjacencyList<string> = [];
+
+   let parents: StringNumberPairs = {};
+   stringNodes.forEach((node) => {
+      if (node.name.length === 0) return;
+      let children: string[] = [];
+
+      (node.children || "").split(",").forEach((n) => {
+         let child = n.trim();
+         if (child.length > 0) children.push(child);
+      });
+
+      let parentNames = Object.keys(parents);
+
+      if (!parentNames.includes(node.name)) {
+         parents[node.name] =
+            nodeList.push({
+               from: node.name,
+               to: children,
+            }) - 1;
+      } else {
+         nodeList[parents[node.name]].to = [...nodeList[parents[node.name]].to, ...children];
+      }
+   });
+
+   return nodeList;
 };

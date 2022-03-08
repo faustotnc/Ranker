@@ -2,15 +2,15 @@ import { Slider, Stack, Typography } from "@mui/material";
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
 import KatexEq from "../../KatexEq/KetexEq";
-import { setIterSpeed, setMaxIter } from "../Editor.store";
+import { selectIterSpeed, selectMaxIter, setIterSpeed, setMaxIter } from "../Editor.store";
 import "./AdjustPowerIter.scss";
 
-interface AdjustPowerIterProps {}
+interface AdjustPowerIterProps { }
 
 const AdjustPowerIter: React.FC<AdjustPowerIterProps> = () => {
    const dispatch = useAppDispatch();
-   const maxIter = useAppSelector((state) => state.editor.maxIter);
-   const iterSpeed = useAppSelector((state) => state.editor.iterSpeed);
+   const maxIter = useAppSelector(selectMaxIter);
+   const iterSpeed = useAppSelector(selectIterSpeed);
 
    const handleChangeMaxIter = (e: any) => {
       dispatch(setMaxIter(Number(e.target.value)));
@@ -33,9 +33,9 @@ const AdjustPowerIter: React.FC<AdjustPowerIterProps> = () => {
          </div>
 
          <Typography variant="caption" component="p" className="caption-text">
-            However, because <KatexEq>M</KatexEq> is column-stochastic and <KatexEq>{"\\vec{r}"}</KatexEq> is a
-            probability vector, <KatexEq>{"||M \\vec{r}_{n} || = 1"}</KatexEq>, and we can reduce the power iteration
-            formula to:
+            However, in the case of PageRank, the matrix <KatexEq>M</KatexEq> is column-stochastic and{" "}
+            <KatexEq>{"\\vec{r}"}</KatexEq> is a probability vector, therefore, <KatexEq>{"||M \\vec{r}_{n} || = 1"}</KatexEq>, and
+            we can reduce the power iteration formula to:
          </Typography>
 
          <div className="equation">
@@ -63,23 +63,23 @@ const AdjustPowerIter: React.FC<AdjustPowerIterProps> = () => {
          </Stack>
 
          <Typography component="legend" sx={{ mt: "24px", opacity: 0.7 }}>
-            Iteration Speed
+            Iterations Per Second
          </Typography>
          <Stack spacing={2} direction="row" sx={{ mb: 1 }} alignItems="center">
-            <span>Fast</span>
+            <span>Slow</span>
             <Slider
                aria-label="Iteration Speed"
                defaultValue={1}
                // getAriaValueText={valuetext}
                valueLabelDisplay="auto"
-               step={0.25}
+               step={0.10}
                marks
-               min={0.25}
-               max={1.75}
+               min={0.10}
+               max={1.90}
                value={iterSpeed}
                onChange={handleChangeIterSpeed}
             />
-            <span>Slow</span>
+            <span>Fast</span>
          </Stack>
       </div>
    );

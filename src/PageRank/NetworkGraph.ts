@@ -24,7 +24,7 @@ export const getColorCode = (p: number, min: number, max: number) => {
 
    return {
       bg: NODE_COLORS[Math.round(interpolated_prob)],
-      // Change "65" to be 15% above the range of y1 and y1
+      // TODO: Change "65" to be 15% above the range of y1 and y1
       fg: interpolated_prob >= 65 ? "white" : "black",
    };
 };

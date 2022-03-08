@@ -1,10 +1,10 @@
 import { useEffect, useMemo } from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getDesignTokens } from "./theme";
-import { Paper, Box, PaletteMode, Drawer } from "@mui/material";
+import { Paper, Box, PaletteMode, Drawer, CssBaseline } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "./hooks";
-import { addNamedNode, SingleInputNode } from "./components/EditorSideBar/Editor.store";
-import { updateNetworkFromNodeList } from "./components/GraphView/GraphView.store";
+import { addNamedNode, MatrixFormula, setIterSpeed, setMaxIter, SingleInputNode } from "./components/EditorSideBar/Editor.store";
+import { setGraphSettingsData } from "./components/GraphView/GraphView.store";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import "./App.scss";
 
@@ -13,10 +13,10 @@ import Editor from "./components/EditorSideBar/EditorSideBar";
 import Graph from "./components/GraphView/GraphView";
 import RVector from "./components/RVector/RVector";
 import Header from "./components/Header/Header";
-import { calculateTrueViewportHeight, getQueryStringParams } from "./utils";
+import { calculateTrueViewportHeight, generateAdjListFromInput, getQueryStringParams } from "./utils";
 import { toggleOpenEditor } from "./AppSettings.store";
 
-interface AppProps {}
+interface AppProps { }
 
 const App: React.FC<AppProps> = () => {
    const dispatch = useAppDispatch();
@@ -37,6 +37,9 @@ const App: React.FC<AppProps> = () => {
       return createTheme(getDesignTokens(palette));
    }, [themeMode, prefersDarkMode]);
 
+   // Composes a graph from the query params if they exist
+   // Graph query params follow this format: "?graph=a:a,b;b:c,d"
+   // This instructs ranker to form a graph as follows: [a->a, a->b, b->c, b->d]
    const composeGraphFromQuery = () => {
       let queryGraphNodes: SingleInputNode[] = [];
 
@@ -51,23 +54,32 @@ const App: React.FC<AppProps> = () => {
          queryGraphNodes.push(node);
       });
 
-      if (queryGraphNodes.length > 0) dispatch(updateNetworkFromNodeList(queryGraphNodes));
+
+      let adjList = generateAdjListFromInput(queryGraphNodes);
+      // TODO: MatrixFormula, iterSpeed, and maxIter also need to be extracted from query string
+      dispatch(setMaxIter(50))
+      dispatch(setIterSpeed(50))
+      if (queryGraphNodes.length > 0) dispatch(setGraphSettingsData({
+         graph: adjList,
+         matrixFormula: MatrixFormula.Simple,
+         iterSpeed: 1,
+         maxIter: 50
+      }));
+
    };
 
    useEffect(() => {
       calculateTrueViewportHeight();
 
-      // Initial Calculation right after the viewport is resized
-      window.addEventListener("resize", () => {
-         calculateTrueViewportHeight();
-      });
+      // Initial calculation right after the viewport is resized
+      window.addEventListener("resize", () => calculateTrueViewportHeight());
 
       composeGraphFromQuery();
    }, []);
 
    return (
       <ThemeProvider theme={themePalette}>
-         {/* <CssBaseline></CssBaseline> */}
+         <CssBaseline></CssBaseline>
 
          <Header></Header>
 

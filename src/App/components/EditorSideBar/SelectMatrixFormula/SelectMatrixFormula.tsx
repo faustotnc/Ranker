@@ -1,7 +1,7 @@
 import { FormControl, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
-import { MatrixFormula, setMatrixFormula as setMatrixFormula } from "../Editor.store";
+import { MatrixFormula, setMatrixFormula } from "../Editor.store";
 import "./SelectMatrixFormula.scss";
 import KatexEq from "../../KatexEq/KetexEq";
 
@@ -106,10 +106,10 @@ const SelectMatrixFormula: React.FC<SelectMatrixFormulaProps> = () => {
                   <KatexEq>{"M_{ij}=\\beta S_{ij}+(1-\\beta) \\frac{1}{N}"}</KatexEq>
                </div>
                <Typography variant="caption" component="p" className="caption-text" sx={{ mt: "16px" }}>
-                  Where <KatexEq>{"S_{ij}"}</KatexEq> is the generated, true column-stochastic matrix. This formulation
-                  is equivalent to adding a probability <KatexEq>\beta</KatexEq> of following one of the links leaving
-                  the current node, or randomly jumping to any other node in the network with probability{" "}
-                  <KatexEq>(1 - \beta)</KatexEq>. The Google matrix solves both dead ends and spider traps.
+                  Where <KatexEq>{"S"}</KatexEq> is the generated, true column-stochastic matrix. With this formulation,
+                  a random surfer will follow an outgoing link from the current node with probability{" "}
+                  <KatexEq>\beta</KatexEq>, and will jump to any other random node in the network with probability{" "}
+                  <KatexEq>(1-\beta)</KatexEq>. The Google matrix solves both dead ends and spider traps.
                </Typography>
             </>
          )}

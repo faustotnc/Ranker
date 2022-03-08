@@ -4,27 +4,33 @@ import * as React from "react";
 import { getColorCode } from "../../../PageRank";
 import { useAppSelector } from "../../hooks";
 import "./RVector.scss";
+import { selectProbVector } from "../GraphView/GraphView.store";
 
-interface RVectorProps {}
+interface RVectorProps { }
 
 const RVector: React.FC<RVectorProps> = () => {
    let currentTheme = useTheme();
-   let prob = useAppSelector((state) => state.graphView.probVector);
+   let probVector = useAppSelector(selectProbVector);
+   const [vectorCells, setVectorCells] = React.useState<JSX.Element[]>([]);
 
-   let cells = Object.entries(prob).map((p) => {
-      let probMin = Math.min(...Object.values(prob).map((p) => p * 100));
-      let probMax = Math.max(...Object.values(prob).map((p) => p * 100));
-      let color = getColorCode(p[1] * 100, probMin, probMax);
+   React.useEffect(() => {
+      let cells = Object.entries(probVector).map((p) => {
+         let probMin = Math.min(...Object.values(probVector).map((p) => p * 100));
+         let probMax = Math.max(...Object.values(probVector).map((p) => p * 100));
+         let color = getColorCode(p[1] * 100, probMin, probMax);
 
-      return (
-         <Box className="cell" sx={{ display: "flex", alignItems: "center" }} key={p[0]}>
-            <Box className="cell-value" sx={{ color: color.fg, backgroundColor: color.bg }}>
-               {+(p[1] * 100).toFixed(3)}
+         return (
+            <Box className="cell" sx={{ display: "flex", alignItems: "center" }} key={p[0]}>
+               <Box className="cell-value" sx={{ color: color.fg, backgroundColor: color.bg }}>
+                  {+(p[1] * 100).toFixed(3)}
+               </Box>
+               <span className="cell-name">{p[0]}</span>
             </Box>
-            <span className="cell-name">{p[0]}</span>
-         </Box>
-      );
-   });
+         );
+      });
+
+      setVectorCells(cells);
+   }, [probVector]);
 
    let vectorMathImage =
       currentTheme.palette.mode === "light"
@@ -46,7 +52,7 @@ const RVector: React.FC<RVectorProps> = () => {
                      </Box>
                   </Box>
 
-                  {cells}
+                  {vectorCells}
                </div>
             </Box>
          </Box>

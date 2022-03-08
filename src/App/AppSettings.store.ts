@@ -12,7 +12,7 @@ let savedTheme = getCookie("theme") as ThemeType;
 
 // Define the initial state using that type
 const initialState: appSettingsSliceState = {
-   currentTheme: ["light", "dark", "auto"].includes(savedTheme) ? savedTheme : "light",
+   currentTheme: ["light", "dark", "auto"].includes(savedTheme) ? savedTheme : "auto",
    editorIsOpen: false,
 };
 

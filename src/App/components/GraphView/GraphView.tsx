@@ -1,118 +1,83 @@
-import { Box, Paper } from "@mui/material";
-import React, { useEffect, useRef, useState } from "react";
+import { Box, LinearProgress, Paper } from "@mui/material";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Network, NetworkGraph, PowerIterator } from "../../../PageRank";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import GraphControls from "./GraphControls/GraphControls";
 import "./GraphView.scss";
-import { resetProbabilities, updateProbabilities } from "./GraphView.store";
 import NodeInfo from "./NodeInfo/NodeInfo";
+import {
+   selectGraphSettingsData,
+   selectProbVector,
+   setPowerIterIsRunning,
+   setProbVector,
+} from "./GraphView.store";
 
-// { from: "y", to: ["y", "a"] },
-// { from: "a", to: ["y", "m"] },
-// { from: "m", to: ["a"] },
-// --------------------------
-// A ->
-// B -> C, A
-// C -> B
-// D -> A, B
-// E -> D, B, F
-// F -> E, B
-// H -> B, E
-// I -> B, E
-// J -> B, E
-// K -> F
-// L -> F
-// M -> M, N
-// N -> M, O, E
-// O -> O, F
-// --------------------------
-// { from: "A", to: ["A", "B", "C"] },
-// { from: "B", to: ["C"] },
-// { from: "C", to: ["A"] },
-// A -> A, B, C, D
-// M -> A, C, K, D
-// P -> O, A, B, R
+interface GraphViewProps { }
 
-interface GraphViewProps {}
+// Initialize external classes needed to compute PageRank
+let network = Network.default();
+let powerIterator = PowerIterator.default(network);
+let cytoGraph = new NetworkGraph();
 
-const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
+const GraphView: React.FC<GraphViewProps> = () => {
    let dispatch = useAppDispatch();
    let cyContainer = useRef(null);
-   let graphAdjacencyList = useAppSelector((state) => state.graphView.adjacencyList);
-   let probVector = useAppSelector((state) => state.graphView.probVector);
-   let currentMatrixFormula = useAppSelector((state) => state.editor.matrixFormula);
-   let currentPowerIterSpeed = useAppSelector((state) => state.editor.iterSpeed);
-   let [powerIterControl, setPowerIterControl] = useState<"started" | "paused">("paused");
-   let [powerIterTimer, setPowerIterTimer] = useState<number>(-1);
 
-   // Initialize the network, cytoscape graph, and power iterator.
-   let network = useRef(new Network<string>([]));
-   let cytoGraph = useRef(new NetworkGraph());
-   let powerIterator = useRef(new PowerIterator([[]], []));
+   let [currentStep, setCurrentStep] = useState<number>(0);
 
+   // Internal State of the GraphView Store
+   let graphSettingsData = useAppSelector(selectGraphSettingsData);
+   let probVector = useAppSelector(selectProbVector);
+
+   /** Mount the CytoGraph canvas once the element is ready. */
+   useEffect(() => cytoGraph.mountOn(cyContainer.current!), [cyContainer]);
+
+   /** Executed every time the graph settings data are updated */
    useEffect(() => {
-      cytoGraph.current.mountOn(cyContainer.current!);
-   }, [cyContainer]);
+      // Update the network with the current adjacency list and matrix formula
+      network.updateWith(graphSettingsData.graph, graphSettingsData.matrixFormula);
 
-   /**
-    * Executed every time the network is updated
-    */
-   useEffect(() => {
-      // Create the network and cyto-graph
-      network.current.updateWith(graphAdjacencyList, currentMatrixFormula);
+      // Reset the power iterator
+      powerIterator.resetWith(network, graphSettingsData.maxIter, graphSettingsData.iterSpeed);
+      updateProbVector();
 
-      // Create the base probability vector (r).
-      let nodes = network.current.getNodes();
-      let baseProb: { [key: string]: number } = {};
-      nodes.forEach((node) => {
-         baseProb[node] = 1 / nodes.length;
-      });
+      dispatch(setPowerIterIsRunning(false));
 
       // Display the graph
-      cytoGraph.current.clear();
-      cytoGraph.current.addNetwork(network.current.getEdges(), baseProb).rerun();
+      cytoGraph.clear();
+      cytoGraph.addNetwork(network.getEdges(), powerIterator.getRVector()).rerun();
+   }, [graphSettingsData]);
 
-      // Reset the power iterator
-      powerIterator.current = new PowerIterator(network.current.toColumnStochastic(), Object.values(baseProb));
-   }, [graphAdjacencyList]);
+   /** Update the Cytoscape graph every time the probability vector is updated.  */
+   useEffect(() => cytoGraph.updateProb(probVector), [probVector]);
 
-   useEffect(() => {
-      cytoGraph.current.updateProb(probVector);
+   const updateProbVector = () => {
+      dispatch(setProbVector(powerIterator.getRVector()));
+      setCurrentStep(powerIterator.getCurrentStep())
+   }
 
-      // Reset the power iterator
-      powerIterator.current = new PowerIterator(network.current.toColumnStochastic(), Object.values(probVector));
-
-      
-   }, [probVector]);
-
-   const handleNextPowerIter = () => {
-      let newR = powerIterator.current.next();
-      let prob: { [key: string]: number } = {};
-      network.current.getNodes().forEach((node, idx) => (prob[node] = newR[idx]));
-
-      dispatch(updateProbabilities(prob));
-   };
+   const handleNextPowerIter = useCallback(() => {
+      powerIterator.next();
+      updateProbVector();
+   }, [dispatch]);
 
    const handleRerunGraph = () => {
-      cytoGraph.current.rerun();
+      cytoGraph.rerun();
    };
 
    const handleRestartPowerIter = () => {
-      dispatch(resetProbabilities());
+      powerIterator.reset();
+      updateProbVector();
+      dispatch(setPowerIterIsRunning(false));
    };
 
    const handleStartPausePowerIter = () => {
-      if (powerIterControl === "started") {
-         setPowerIterControl("paused");
-         window.clearTimeout(powerIterTimer);
+      if (powerIterator.isPaused()) {
+         powerIterator.run(() => updateProbVector());
+         dispatch(setPowerIterIsRunning(true));
       } else {
-         setPowerIterControl("started");
-
-         let timer = window.setInterval(() => {
-            handleNextPowerIter();
-         }, currentPowerIterSpeed * 1000);
-
-         setPowerIterTimer(timer);
+         powerIterator.pause();
+         dispatch(setPowerIterIsRunning(false));
       }
    };
 
@@ -122,11 +87,13 @@ const GraphView: React.FC<GraphViewProps> = (props: GraphViewProps) => {
             <GraphControls
                onRerunGraph={handleRerunGraph}
                onNextPowerIter={handleNextPowerIter}
-               onFitGraph={() => cytoGraph.current.fit()}
-               onZoomIn={() => cytoGraph.current.zoomIn()}
-               onZoomOut={() => cytoGraph.current.zoomOut()}
-               onRestartPowerIteration={() => handleRestartPowerIter()}
-               onStartPausePowerIter={() => handleStartPausePowerIter()}
+               onRestartPowerIteration={handleRestartPowerIter}
+               onStartPausePowerIter={handleStartPausePowerIter}
+               onFitGraph={() => cytoGraph.fit()}
+               onZoomIn={() => cytoGraph.zoomIn()}
+               onZoomOut={() => cytoGraph.zoomOut()}
+               currentStep={currentStep}
+               maxIter={graphSettingsData.maxIter}
             ></GraphControls>
          </Paper>
 

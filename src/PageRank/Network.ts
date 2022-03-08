@@ -12,8 +12,13 @@ export class Network<T> {
    private matrixFormula: MatrixFormula = MatrixFormula.Simple;
    private nodeTable;
 
-   constructor(list: AdjacencyList<T>) {
+   constructor(list: AdjacencyList<T>, mAlgo?: MatrixFormula) {
       this.nodeTable = new NodeTable(list);
+      if (mAlgo) this.matrixFormula = mAlgo;
+   }
+
+   public static default() {
+      return new Network<string>([]);
    }
 
    public updateWith(list: AdjacencyList<T>, mAlgo: MatrixFormula) {

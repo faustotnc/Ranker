@@ -2,25 +2,41 @@ import { Button, Paper, Typography, Divider, IconButton, Box } from "@mui/materi
 import * as React from "react";
 import "./EditorSideBar.scss";
 import NodeDetails from "./NodeDetails/GraphNodes";
-import { updateNetworkFromNodeList } from "../GraphView/GraphView.store";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import SelectMatrixFormula from "./SelecMatrixFormula/SelectMatrixFormula";
+import SelectMatrixFormula from "./SelectMatrixFormula/SelectMatrixFormula";
 import BackIcon from "@mui/icons-material/NavigateBefore";
 import { toggleOpenEditor } from "../../AppSettings.store";
 import AdjustPowerIter from "./AdjustPowerIter/AdjustPowerIter";
-import { setGraphHasBeenUpdated } from "./Editor.store";
+import { GraphSettingsData, selectIterSpeed, selectMatrixFormula, selectMaxIter, selectNodeList, selectSettingsHaveChanged, setChangesHaveExecuted } from "./Editor.store";
+import { generateAdjListFromInput } from "../../utils";
+import { setGraphSettingsData } from "../GraphView/GraphView.store";
+import { ColorButton } from "../../theme";
 
-interface EditorProps {}
+
+interface EditorProps { }
 
 const Editor: React.FC<EditorProps> = () => {
    const dispatch = useAppDispatch();
-   const nodeList = useAppSelector((state) => state.editor.nodes);
-   const graphSettingsHaveChanged = useAppSelector((state) => state.editor.hasChanged);
+   const graphSettingsHaveChanged = useAppSelector(selectSettingsHaveChanged);
+
+   // Graph Setting Values
+   const nodeList = useAppSelector(selectNodeList);
+   const matrixFormulaVal = useAppSelector(selectMatrixFormula);
+   const maxIterVal = useAppSelector(selectMaxIter);
+   const iterSpeedVal = useAppSelector(selectIterSpeed);
 
    const handleUpdateGraph = (e: any) => {
       e.preventDefault();
-      dispatch(updateNetworkFromNodeList(nodeList));
-      dispatch(setGraphHasBeenUpdated())
+
+      let graphSettings: GraphSettingsData = {
+         graph: generateAdjListFromInput(nodeList),
+         matrixFormula: matrixFormulaVal,
+         maxIter: maxIterVal,
+         iterSpeed: iterSpeedVal,
+      }
+
+      dispatch(setGraphSettingsData(graphSettings));
+      dispatch(setChangesHaveExecuted());
    };
 
    return (
@@ -39,7 +55,7 @@ const Editor: React.FC<EditorProps> = () => {
                </Box>
 
                <div>
-                  <Button
+                  <ColorButton
                      size="small"
                      variant="contained"
                      disableElevation
@@ -48,7 +64,7 @@ const Editor: React.FC<EditorProps> = () => {
                      disabled={!graphSettingsHaveChanged}
                   >
                      Update Graph
-                  </Button>
+                  </ColorButton>
 
                   <IconButton
                      aria-label="close editor"
