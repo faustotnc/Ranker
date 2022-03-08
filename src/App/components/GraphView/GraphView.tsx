@@ -12,6 +12,7 @@ import {
    setProbVector,
    setSelectedNode,
 } from "./GraphView.store";
+import ViewMatrices from "./ViewMatrices/ViewMatrices";
 
 interface GraphViewProps { }
 
@@ -23,6 +24,7 @@ let cytoGraph = new NetworkGraph();
 const GraphView: React.FC<GraphViewProps> = () => {
    const dispatch = useAppDispatch();
    const cyContainer = useRef(null);
+   const [viewMatricesIsOpen, setViewMatricesIsOpen] = useState<boolean>(false);
 
    const [currentStep, setCurrentStep] = useState<number>(0);
 
@@ -102,10 +104,14 @@ const GraphView: React.FC<GraphViewProps> = () => {
                onZoomOut={() => cytoGraph.zoomOut()}
                currentStep={currentStep}
                maxIter={graphSettingsData.maxIter}
+               onToggleViewMatrices={() => setViewMatricesIsOpen(!viewMatricesIsOpen)}
             ></GraphControls>
          </Paper>
 
-         <Paper elevation={0} sx={{ boxShadow: "none" }} className="graph-container" ref={cyContainer}></Paper>
+         <Box className="main-view">
+            <ViewMatrices isOpen={viewMatricesIsOpen} network={network}></ViewMatrices>
+            <Paper elevation={0} sx={{ boxShadow: "none" }} className={"graph-container " + (viewMatricesIsOpen ? "isClosed" : "")} ref={cyContainer}></Paper>
+         </Box>
 
          <Paper variant="outlined" elevation={0} className="node-info-bar">
             <NodeInfo

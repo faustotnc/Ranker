@@ -3,6 +3,8 @@ import { Box } from "@mui/system";
 import * as React from "react";
 import { useState } from "react";
 import "./GraphControls.scss";
+import { useAppSelector } from "../../../hooks";
+import { selectPowerIterIsRunning } from "../GraphView.store";
 
 // ICONS
 import NextIcon from "@mui/icons-material/NextPlan";
@@ -15,8 +17,7 @@ import TableViewIcon from "@mui/icons-material/TableView";
 import ZoomInIcon from "@mui/icons-material/ZoomIn";
 import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import FitScreenIcon from "@mui/icons-material/FitScreen";
-import { useAppSelector } from "../../../hooks";
-import { selectPowerIterIsRunning } from "../GraphView.store";
+import WebhookIcon from "@mui/icons-material/Webhook";
 
 interface GraphControlsProps {
    onNextPowerIter: () => void;
@@ -26,6 +27,7 @@ interface GraphControlsProps {
    onZoomOut: () => void;
    onRestartPowerIteration: () => void;
    onStartPausePowerIter: () => void;
+   onToggleViewMatrices: () => void;
    currentStep: number;
    maxIter: number;
 }
@@ -35,6 +37,7 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
    const open = Boolean(anchorEl);
    const isRunning = useAppSelector(selectPowerIterIsRunning);
    const isCompleted = props.currentStep === props.maxIter;
+   const [viewMatricesIsOpen, setViewMatricesIsOpen] = useState<boolean>(false);
 
    const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
       setAnchorEl(event.currentTarget);
@@ -135,9 +138,13 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
                   disableElevation
                   className="rounded"
                   aria-label="start/pause"
-                  endIcon={<TableViewIcon />}
+                  endIcon={viewMatricesIsOpen ? <WebhookIcon /> : <TableViewIcon />}
+                  onClick={() => {
+                     setViewMatricesIsOpen(!viewMatricesIsOpen)
+                     props.onToggleViewMatrices();
+                  }}
                >
-                  View Matrices
+                  {viewMatricesIsOpen ? "View Graph" : "View Matrices"}
                </Button>
             </div>
 
@@ -167,7 +174,10 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
                      </ListItemIcon>
                      <ListItemText>Reset Graph Layout</ListItemText>
                   </MenuItem>
-                  <MenuItem onClick={() => props.onFitGraph()}>
+                  <MenuItem onClick={() => {
+                     handleClose();
+                     props.onFitGraph()
+                  }}>
                      <ListItemIcon>
                         <FitScreenIcon fontSize="small" />
                      </ListItemIcon>
@@ -185,11 +195,15 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
                      </ListItemIcon>
                      <ListItemText>Zoom Out</ListItemText>
                   </MenuItem>
-                  <MenuItem onClick={handleClose}>
+                  <MenuItem onClick={() => {
+                     handleClose();
+                     setViewMatricesIsOpen(!viewMatricesIsOpen);
+                     props.onToggleViewMatrices();
+                  }}>
                      <ListItemIcon>
-                        <TableViewIcon fontSize="small" />
+                        {viewMatricesIsOpen ? <WebhookIcon fontSize="small" /> : <TableViewIcon fontSize="small" />}
                      </ListItemIcon>
-                     <ListItemText>View Matrices</ListItemText>
+                     <ListItemText>{viewMatricesIsOpen ? "View Graph" : "View Matrices"}</ListItemText>
                   </MenuItem>
                </Menu>
             </div>

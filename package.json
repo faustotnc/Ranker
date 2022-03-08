@@ -19,7 +19,7 @@
       "colormap": "^2.3.2",
       "cytoscape": "^3.20.0",
       "cytoscape-cola": "^2.5.0",
-      "highcharts": "^9.3.1",
+      "highcharts": "^9.3.3",
       "highcharts-react-official": "^3.1.0",
       "katex": "^0.15.1",
       "node-sass": "npm:sass@^1.45.1",

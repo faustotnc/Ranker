@@ -30,6 +30,10 @@ export class Network<T> {
       return this.nodeTable.dim;
    }
 
+   public getNodeTable() {
+      return this.nodeTable;
+   }
+
    /**
     * Gets the list of all nodes in the network (including leaves).
     * @returns An array containing all nodes in the network.
