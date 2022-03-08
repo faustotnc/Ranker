@@ -2,13 +2,14 @@ import { Box } from "@mui/system";
 import { useTheme } from "@mui/material/styles";
 import * as React from "react";
 import { getColorCode } from "../../../PageRank";
-import { useAppSelector } from "../../hooks";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import "./RVector.scss";
-import { selectProbVector } from "../GraphView/GraphView.store";
+import { selectProbVector, setSelectedNode } from "../GraphView/GraphView.store";
 
 interface RVectorProps { }
 
 const RVector: React.FC<RVectorProps> = () => {
+   const dispatch = useAppDispatch();
    let currentTheme = useTheme();
    let probVector = useAppSelector(selectProbVector);
    const [vectorCells, setVectorCells] = React.useState<JSX.Element[]>([]);
@@ -20,7 +21,7 @@ const RVector: React.FC<RVectorProps> = () => {
          let color = getColorCode(p[1] * 100, probMin, probMax);
 
          return (
-            <Box className="cell" sx={{ display: "flex", alignItems: "center" }} key={p[0]}>
+            <Box className="cell" sx={{ display: "flex", alignItems: "center" }} key={p[0]} onClick={() => dispatch(setSelectedNode(p[0]))}>
                <Box className="cell-value" sx={{ color: color.fg, backgroundColor: color.bg }}>
                   {+(p[1] * 100).toFixed(3)}
                </Box>

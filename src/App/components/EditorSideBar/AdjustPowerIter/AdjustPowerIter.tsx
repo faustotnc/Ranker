@@ -75,7 +75,7 @@ const AdjustPowerIter: React.FC<AdjustPowerIterProps> = () => {
                step={0.10}
                marks
                min={0.10}
-               max={1.90}
+               max={3}
                value={iterSpeed}
                onChange={handleChangeIterSpeed}
             />

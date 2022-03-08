@@ -58,7 +58,7 @@ const App: React.FC<AppProps> = () => {
       let adjList = generateAdjListFromInput(queryGraphNodes);
       // TODO: MatrixFormula, iterSpeed, and maxIter also need to be extracted from query string
       dispatch(setMaxIter(50))
-      dispatch(setIterSpeed(50))
+      dispatch(setIterSpeed(1))
       if (queryGraphNodes.length > 0) dispatch(setGraphSettingsData({
          graph: adjList,
          matrixFormula: MatrixFormula.Simple,

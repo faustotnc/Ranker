@@ -10,6 +10,7 @@ import {
    selectProbVector,
    setPowerIterIsRunning,
    setProbVector,
+   setSelectedNode,
 } from "./GraphView.store";
 
 interface GraphViewProps { }
@@ -20,14 +21,14 @@ let powerIterator = PowerIterator.default(network);
 let cytoGraph = new NetworkGraph();
 
 const GraphView: React.FC<GraphViewProps> = () => {
-   let dispatch = useAppDispatch();
-   let cyContainer = useRef(null);
+   const dispatch = useAppDispatch();
+   const cyContainer = useRef(null);
 
-   let [currentStep, setCurrentStep] = useState<number>(0);
+   const [currentStep, setCurrentStep] = useState<number>(0);
 
    // Internal State of the GraphView Store
-   let graphSettingsData = useAppSelector(selectGraphSettingsData);
-   let probVector = useAppSelector(selectProbVector);
+   const graphSettingsData = useAppSelector(selectGraphSettingsData);
+   const probVector = useAppSelector(selectProbVector);
 
    /** Mount the CytoGraph canvas once the element is ready. */
    useEffect(() => cytoGraph.mountOn(cyContainer.current!), [cyContainer]);
@@ -46,6 +47,13 @@ const GraphView: React.FC<GraphViewProps> = () => {
       // Display the graph
       cytoGraph.clear();
       cytoGraph.addNetwork(network.getEdges(), powerIterator.getRVector()).rerun();
+
+      //
+      cytoGraph.removeAllClickListeners();
+
+      cytoGraph.onNodeClick((ev) => dispatch(setSelectedNode(ev.target.id())));
+      cytoGraph.onBgClick(() => dispatch(setSelectedNode(null)));
+      cytoGraph.onEdgeClick(() => dispatch(setSelectedNode(null)));
    }, [graphSettingsData]);
 
    /** Update the Cytoscape graph every time the probability vector is updated.  */
@@ -100,7 +108,10 @@ const GraphView: React.FC<GraphViewProps> = () => {
          <Paper elevation={0} sx={{ boxShadow: "none" }} className="graph-container" ref={cyContainer}></Paper>
 
          <Paper variant="outlined" elevation={0} className="node-info-bar">
-            <NodeInfo></NodeInfo>
+            <NodeInfo
+               network={network}
+               cytoGraph={cytoGraph}
+            ></NodeInfo>
          </Paper>
       </Box>
    );

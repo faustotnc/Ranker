@@ -159,7 +159,7 @@ export class NetworkGraph {
             // @ts-ignore
             edgeLength: 150,
             maxSimulationTime: 30000, // 20 seconds
-            padding: 72,
+            padding: window.innerWidth < 500 ? 16 : 72,
          })
          .run();
    }
@@ -175,8 +175,19 @@ export class NetworkGraph {
    public fit() {
       this.cytoGraph.animate({
          fit: {
-            padding: 72,
+            padding: window.innerWidth < 500 ? 16 : 72,
             eles: this.cytoGraph.elements(),
+         },
+         duration: 750,
+         easing: "ease-out-expo",
+      });
+   }
+
+   public fitTo(id: string) {
+      this.cytoGraph.animate({
+         fit: {
+            padding: window.innerWidth < 500 ? 72 : 200,
+            eles: this.cytoGraph.$id(id),
          },
          duration: 750,
          easing: "ease-out-expo",
@@ -201,5 +212,23 @@ export class NetworkGraph {
             y: this.cytoGraph.height() / 2,
          },
       });
+   }
+
+   public onNodeClick(callback: (evt: cytoscape.EventObject) => void) {
+      this.cytoGraph.on('tap', 'node', callback)
+   }
+
+   public onEdgeClick(callback: (evt: cytoscape.EventObject) => void) {
+      this.cytoGraph.on('tap', 'edge', callback)
+   }
+
+   public onBgClick(callback: (evt: cytoscape.EventObject) => void) {
+      this.cytoGraph.on('tap', (evt) => {
+         if (evt.target === this.cytoGraph) callback(evt);
+      })
+   }
+
+   public removeAllClickListeners() {
+      this.cytoGraph.off('tap')
    }
 }

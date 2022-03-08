@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AdjacencyList } from "../../../PageRank";
 import { RootState } from "../../../store";
 import { StringNumberPairs } from "../../utils";
 import { GraphSettingsData, MatrixFormula } from "../EditorSideBar/Editor.store";
@@ -9,6 +8,7 @@ interface GraphViewSliceState {
    graphSettingsData: GraphSettingsData;
    probVector: StringNumberPairs;
    powerIterIsRunning: boolean;
+   selectedNode: string | null;
 }
 
 // Define the initial state of the store
@@ -20,7 +20,8 @@ const initialState: GraphViewSliceState = {
       iterSpeed: 0
    },
    probVector: {},
-   powerIterIsRunning: false
+   powerIterIsRunning: false,
+   selectedNode: null
 };
 
 export const graphViewSlice = createSlice({
@@ -36,6 +37,9 @@ export const graphViewSlice = createSlice({
       },
       setPowerIterIsRunning: (state, action: PayloadAction<boolean>) => {
          state.powerIterIsRunning = action.payload;
+      },
+      setSelectedNode: (state, action: PayloadAction<string | null>) => {
+         state.selectedNode = action.payload;
       }
    },
 });
@@ -44,11 +48,13 @@ export const graphViewSlice = createSlice({
 export const {
    setGraphSettingsData,
    setProbVector,
-   setPowerIterIsRunning
+   setPowerIterIsRunning,
+   setSelectedNode
 } = graphViewSlice.actions;
 
 export const selectGraphSettingsData = (state: RootState) => state.graphView.graphSettingsData;
 export const selectProbVector = (state: RootState) => state.graphView.probVector;
 export const selectPowerIterIsRunning = (state: RootState) => state.graphView.powerIterIsRunning;
+export const selectSelectedNode = (state: RootState) => state.graphView.selectedNode;
 
 export default graphViewSlice.reducer;

@@ -111,7 +111,6 @@ export class PowerIterator {
 
       this.r = vec;
       this.currentStep += 1;
-      console.log(this.currentStep);
       return vec;
    }
 
