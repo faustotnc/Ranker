@@ -98,7 +98,3 @@ export const selectSettingsHaveChanged = (state: RootState) => state.editor.hasC
 export const selectNodeList = (state: RootState) => state.editor.nodes;
 
 export default editorSlice.reducer;
-
-export const getGraphSettings = () => {
-   console.log("Settings");
-};

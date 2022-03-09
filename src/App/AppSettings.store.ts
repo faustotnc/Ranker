@@ -8,9 +8,8 @@ interface appSettingsSliceState {
    editorIsOpen: boolean;
 }
 
-const savedTheme = getCookie("theme") as ThemeType;
-
 // Define the initial state using that type
+const savedTheme = getCookie("theme") as ThemeType;
 const initialState: appSettingsSliceState = {
    currentTheme: ["light", "dark", "auto"].includes(savedTheme) ? savedTheme : "auto",
    editorIsOpen: false,

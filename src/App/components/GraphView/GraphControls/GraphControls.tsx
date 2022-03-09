@@ -1,23 +1,21 @@
+import FitScreenIcon from "@mui/icons-material/FitScreen";
+import MoreIcon from "@mui/icons-material/MoreVert";
+import NextIcon from "@mui/icons-material/NextPlan";
+import PauseIcon from "@mui/icons-material/Pause";
+import PlayIcon from "@mui/icons-material/PlayArrow";
+import RestartIcon from "@mui/icons-material/RestartAlt";
+import RefreshIcon from "@mui/icons-material/SettingsBackupRestore";
+import TableViewIcon from "@mui/icons-material/TableView";
+import WebhookIcon from "@mui/icons-material/Webhook";
+import ZoomInIcon from "@mui/icons-material/ZoomIn";
+import ZoomOutIcon from "@mui/icons-material/ZoomOut";
 import { Button, IconButton, LinearProgress, ListItemIcon, ListItemText, Menu, MenuItem, Tooltip } from "@mui/material";
 import { Box } from "@mui/system";
 import * as React from "react";
 import { useState } from "react";
-import "./GraphControls.scss";
 import { useAppSelector } from "../../../hooks";
 import { selectPowerIterIsRunning } from "../GraphView.store";
-
-// ICONS
-import NextIcon from "@mui/icons-material/NextPlan";
-import PlayIcon from "@mui/icons-material/PlayArrow";
-import PauseIcon from "@mui/icons-material/Pause";
-import RefreshIcon from "@mui/icons-material/SettingsBackupRestore";
-import RestartIcon from "@mui/icons-material/RestartAlt";
-import MoreIcon from "@mui/icons-material/MoreVert";
-import TableViewIcon from "@mui/icons-material/TableView";
-import ZoomInIcon from "@mui/icons-material/ZoomIn";
-import ZoomOutIcon from "@mui/icons-material/ZoomOut";
-import FitScreenIcon from "@mui/icons-material/FitScreen";
-import WebhookIcon from "@mui/icons-material/Webhook";
+import "./GraphControls.scss";
 
 interface GraphControlsProps {
    onNextPowerIter: () => void;

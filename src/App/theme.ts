@@ -1,7 +1,5 @@
-import { PaletteMode } from "@mui/material";
-import { ThemeOptions } from "@mui/material/styles";
-import { styled } from "@mui/material/styles";
-import { Button } from "@mui/material";
+import { Button, PaletteMode } from "@mui/material";
+import { styled, ThemeOptions } from "@mui/material/styles";
 
 export type ThemeType = PaletteMode | "auto";
 

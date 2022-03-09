@@ -1,11 +1,10 @@
-import React from "react";
+import * as React from "react";
 import ReactDOM from "react-dom";
-import "./index.scss";
-import App from "./App/App";
-import reportWebVitals from "./reportWebVitals";
-
-import { store } from "./store";
 import { Provider } from "react-redux";
+import App from "./App/App";
+import "./index.scss";
+import reportWebVitals from "./reportWebVitals";
+import { store } from "./store";
 
 ReactDOM.render(
    <React.StrictMode>

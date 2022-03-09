@@ -1,8 +1,9 @@
-import * as React from "react";
+import { Box, CssBaseline, Drawer, PaletteMode, Paper } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
-import { getDesignTokens } from "./theme";
-import { Paper, Box, PaletteMode, Drawer, CssBaseline } from "@mui/material";
-import { useAppDispatch, useAppSelector } from "./hooks";
+import useMediaQuery from "@mui/material/useMediaQuery";
+import * as React from "react";
+import "./App.scss";
+import { toggleOpenEditor } from "./AppSettings.store";
 import {
    addNamedNode,
    GraphSettingsData,
@@ -12,17 +13,14 @@ import {
    setMaxIter,
    SingleInputNode,
 } from "./components/EditorSideBar/Editor.store";
-import { setGraphSettingsData } from "./components/GraphView/GraphView.store";
-import useMediaQuery from "@mui/material/useMediaQuery";
-import "./App.scss";
-
-// Sub-components
 import Editor from "./components/EditorSideBar/EditorSideBar";
 import Graph from "./components/GraphView/GraphView";
-import RVector from "./components/RVector/RVector";
+import { setGraphSettingsData } from "./components/GraphView/GraphView.store";
 import Header from "./components/Header/Header";
-import { calculateTrueViewportHeight, generateAdjListFromInput, getQueryStringParams } from "./utils";
-import { toggleOpenEditor } from "./AppSettings.store";
+import RVector from "./components/RVector/RVector";
+import { useAppDispatch, useAppSelector } from "./hooks";
+import { getDesignTokens } from "./theme";
+import { calculateTrueVH, generateAdjListFromInputs, getQueryStringParams } from "./utils";
 
 interface AppProps {}
 
@@ -45,12 +43,15 @@ const App: React.FC<AppProps> = () => {
       return createTheme(getDesignTokens(palette));
    }, [themeMode, prefersDarkMode]);
 
-   // Composes a graph from the query params if they exist
-   // Graph query params follow this format: "?graph=a:a,b;b:c,d"
-   // This instructs ranker to form a graph as follows: [a->a, a->b, b->c, b->d]
-   const composeGraphFromQuery = () => {
-      const queryParams = getQueryStringParams();
+   React.useEffect(() => {
+      // Initial calculation right after the viewport is resized
+      calculateTrueVH();
+      window.addEventListener("resize", () => calculateTrueVH());
 
+      // Composes a graph from the query params if they exist
+      // Graph query params follow this format: "?graph=a:a,b;b:c,d"
+      // This instructs ranker to form a graph as follows: [a->a, a->b, b->c, b->d]
+      const queryParams = getQueryStringParams();
       const queryGraphParam = (queryParams.graph as string) || "";
       const queryGraphNodes: SingleInputNode[] = [];
       queryGraphParam.split(";").forEach((paramNode: string) => {
@@ -69,7 +70,7 @@ const App: React.FC<AppProps> = () => {
       const queryISParam = Number((queryParams.is as string) || "");
 
       const graphData: GraphSettingsData = {
-         graph: generateAdjListFromInput(queryGraphNodes),
+         graph: generateAdjListFromInputs(queryGraphNodes),
          matrixFormula: /^(0|1|2){1}$/g.test(queryMFParam) ? Number(queryMFParam) : MatrixFormula.Simple,
          maxIter: !!queryMIParam && queryMIParam >= 10 && queryMIParam <= 100 ? queryMIParam : 50,
          iterSpeed: !!queryISParam && queryISParam >= 0.1 && queryISParam <= 3 ? queryISParam : 1,
@@ -78,18 +79,8 @@ const App: React.FC<AppProps> = () => {
       dispatch(setMatrixFormula(graphData.matrixFormula));
       dispatch(setMaxIter(graphData.maxIter));
       dispatch(setIterSpeed(graphData.iterSpeed));
-
       dispatch(setGraphSettingsData(graphData));
-   };
-
-   React.useEffect(() => {
-      calculateTrueViewportHeight();
-
-      // Initial calculation right after the viewport is resized
-      window.addEventListener("resize", () => calculateTrueViewportHeight());
-
-      composeGraphFromQuery();
-   }, []);
+   }, [dispatch]);
 
    return (
       <ThemeProvider theme={themePalette}>

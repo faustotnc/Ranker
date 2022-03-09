@@ -1,15 +1,15 @@
+import CenterIcon from "@mui/icons-material/Adjust";
 import { IconButton, Tooltip } from "@mui/material";
 import { Box } from "@mui/system";
 import * as React from "react";
-import "./NodeInfo.scss";
-import CenterIcon from "@mui/icons-material/Adjust";
-import { getColorCode, Network, NetworkGraph } from "../../../../PageRank";
+import { CytoGraph, getColorCodes, Network } from "../../../../PageRank";
 import { useAppSelector } from "../../../hooks";
 import { selectProbVector, selectSelectedNode } from "../GraphView.store";
+import "./NodeInfo.scss";
 
 interface NodeInfoProps {
    network: Network<string>;
-   cytoGraph: NetworkGraph;
+   cytoGraph: CytoGraph;
 }
 
 const NodeInfo: React.FC<NodeInfoProps> = (props) => {
@@ -18,7 +18,9 @@ const NodeInfo: React.FC<NodeInfoProps> = (props) => {
    const probMin = Math.min(...Object.values(probVector).map((p) => p * 100));
    const probMax = Math.max(...Object.values(probVector).map((p) => p * 100));
 
-   const nodeColor = selectedNode ? getColorCode(probVector[selectedNode] * 100, probMin, probMax) : { bg: "", fg: "" };
+   const nodeColor = selectedNode
+      ? getColorCodes(probVector[selectedNode] * 100, probMin, probMax)
+      : { bg: "", fg: "" };
 
    let nodeParents = "*None*";
    if (selectedNode) {

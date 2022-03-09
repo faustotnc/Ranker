@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import cytoscape from "cytoscape";
 import ColorMap from "colormap";
-
+import cytoscape from "cytoscape";
 // @ts-ignore
 import * as cola from "cytoscape-cola";
+
 cytoscape.use(cola);
 
+// The color map used for nodes.
 export const NODE_COLORS = ColorMap({
    colormap: "greens",
    nshades: 101,
@@ -13,7 +14,14 @@ export const NODE_COLORS = ColorMap({
    alpha: 1,
 }).reverse();
 
-export const getColorCode = (p: number, min: number, max: number) => {
+/**
+ * Computes the background and foreground colors for node with probability value `p`.
+ * @param p The probability.
+ * @param min The minimum probability.
+ * @param max The maximum probability.
+ * @returns The background and foreground colors for a node with this probability value.
+ */
+export const getColorCodes = (p: number, min: number, max: number) => {
    // Interpolates the probabilities such that the smallest probability maps to
    // the y1-th color, while the largest probability maps to the y2-th color.
    let interpolated_prob = 40;
@@ -25,32 +33,47 @@ export const getColorCode = (p: number, min: number, max: number) => {
 
    return {
       bg: NODE_COLORS[Math.round(interpolated_prob)],
-      // TODO: Change "65" to be 15% above the range of y1 and y1
       fg: interpolated_prob >= 65 ? "white" : "black",
    };
 };
 
-export const getSize = (p: number, min: number, max: number): [number, number] => {
-   let interpolated_size = 40;
+/**
+ * Computes the relative size of a node based on its probability value.
+ * @param p This node's probability value.
+ * @param min The minimum probability.
+ * @param max The maximum probability.
+ * @returns The relative size of a node based on its probability value.
+ */
+export const getSize = (p: number, min: number, max: number): number => {
+   // Minimum and maximum size a node can have.
    const [y1, y2] = [32, 72];
 
+   let interpolated_size = 40;
    if (max - min > 0) {
       const m = (y2 - y1) / (max - min);
       interpolated_size = m * p + y1 - m * min;
    }
 
-   return [interpolated_size, interpolated_size];
+   return interpolated_size;
 };
 
-export class NetworkGraph {
+export class CytoGraph {
    public cytoGraph: cytoscape.Core;
    private hasMounted = false;
 
+   /**
+    * A new Cytoscape graph.
+    * @param container The HTML element where to mount the Cytoscape canvas.
+    */
    constructor(container?: HTMLElement) {
       this.cytoGraph = cytoscape();
       if (container) this.mountOn(container);
    }
 
+   /**
+    * Mounts the Cytoscape canvas on the given HTML element.
+    * @param container The HTML element where to mount the Cytoscape canvas.
+    */
    public mountOn(container: HTMLElement) {
       if (!this.hasMounted) {
          this.cytoGraph = this.createGraph(container);
@@ -71,6 +94,11 @@ export class NetworkGraph {
       }
    }
 
+   /**
+    * Create a new Cytoscape object.
+    * @param container The HTML element where to mount the Cytoscape canvas.
+    * @returns A new Cytoscape object.
+    */
    private createGraph(container: HTMLElement) {
       return cytoscape({
          container,
@@ -102,6 +130,12 @@ export class NetworkGraph {
       });
    }
 
+   /**
+    * Adds a network to the Cytoscape canvas.
+    * @param edges The network's edges.
+    * @param prob The probability values associated with each node.
+    * @returns `this` - This NetworkCytoGraph
+    */
    public addNetwork(edges: [string, string][], prob: { [key: string]: number }) {
       const min = Math.min(...Object.values(prob)) * 100;
       const max = Math.max(...Object.values(prob)) * 100;
@@ -115,7 +149,7 @@ export class NetworkGraph {
             data: { id: node },
          });
 
-         const color = getColorCode(prob[n.id()] * 100, min, max);
+         const color = getColorCodes(prob[n.id()] * 100, min, max);
          n.style("background-color", color.bg);
          n.style("color", color.fg);
       };
@@ -135,12 +169,16 @@ export class NetworkGraph {
       return this;
    }
 
+   /**
+    * Updates the probability values of the nodes in this Cytoscape graph.
+    * @param prob The probability values associated with each node.
+    */
    public updateProb(prob: { [key: string]: number }) {
       const min = Math.min(...Object.values(prob)) * 100;
       const max = Math.max(...Object.values(prob)) * 100;
 
       this.cytoGraph.nodes().forEach((node) => {
-         const color = getColorCode(prob[node.id()] * 100, min, max);
+         const color = getColorCodes(prob[node.id()] * 100, min, max);
          node.style("background-color", color.bg);
          node.style("color", color.fg);
 
@@ -150,6 +188,7 @@ export class NetworkGraph {
       });
    }
 
+   /** Rerun the Cytoscape layout algorithm. */
    public rerun() {
       this.cytoGraph
          .layout({
@@ -165,14 +204,12 @@ export class NetworkGraph {
          .run();
    }
 
+   /** Clears the Cytoscape graph. */
    public clear() {
       this.cytoGraph.elements().remove();
    }
 
-   public center() {
-      this.cytoGraph.center();
-   }
-
+   /** Fit the entire Cytoscape graph to the canvas. */
    public fit() {
       this.cytoGraph.animate({
          fit: {
@@ -184,6 +221,10 @@ export class NetworkGraph {
       });
    }
 
+   /**
+    * Fit (zoom into) the specified node to the canvas
+    * @param id The node's id.
+    */
    public fitTo(id: string) {
       this.cytoGraph.animate({
          fit: {
@@ -195,6 +236,7 @@ export class NetworkGraph {
       });
    }
 
+   /** Zoom into the center of the canvas. */
    public zoomIn() {
       this.cytoGraph.zoom({
          level: this.cytoGraph.zoom() + 0.1,
@@ -205,6 +247,7 @@ export class NetworkGraph {
       });
    }
 
+   /** Zoom out from the center of the canvas. */
    public zoomOut() {
       this.cytoGraph.zoom({
          level: this.cytoGraph.zoom() - 0.1,
@@ -215,20 +258,33 @@ export class NetworkGraph {
       });
    }
 
+   /**
+    * Execute a callback when a node is clicked.
+    * @param callback The callback to execute when a node is clicked.
+    */
    public onNodeClick(callback: (evt: cytoscape.EventObject) => void) {
       this.cytoGraph.on("tap", "node", callback);
    }
 
+   /**
+    * Execute a callback when an edge is clicked.
+    * @param callback The callback to execute when an edge is clicked.
+    */
    public onEdgeClick(callback: (evt: cytoscape.EventObject) => void) {
       this.cytoGraph.on("tap", "edge", callback);
    }
 
+   /**
+    * Execute a callback when the canvas' background is clicked.
+    * @param callback The callback to execute when the canvas' background is clicked.
+    */
    public onBgClick(callback: (evt: cytoscape.EventObject) => void) {
       this.cytoGraph.on("tap", (evt) => {
          if (evt.target === this.cytoGraph) callback(evt);
       });
    }
 
+   /** Remove all click listeners from the Cytoscape graph. */
    public removeAllClickListeners() {
       this.cytoGraph.off("tap");
    }

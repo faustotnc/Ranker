@@ -1,11 +1,11 @@
-import { Paper, Typography, Divider, IconButton, Box } from "@mui/material";
-import * as React from "react";
-import "./EditorSideBar.scss";
-import NodeDetails from "./NodeDetails/GraphNodes";
-import { useAppDispatch, useAppSelector } from "../../hooks";
-import SelectMatrixFormula from "./SelectMatrixFormula/SelectMatrixFormula";
 import BackIcon from "@mui/icons-material/NavigateBefore";
+import { Box, Divider, IconButton, Paper, Typography } from "@mui/material";
+import * as React from "react";
 import { toggleOpenEditor } from "../../AppSettings.store";
+import { useAppDispatch, useAppSelector } from "../../hooks";
+import { ColorButton } from "../../theme";
+import { generateAdjListFromInputs } from "../../utils";
+import { setGraphSettingsData } from "../GraphView/GraphView.store";
 import AdjustPowerIter from "./AdjustPowerIter/AdjustPowerIter";
 import {
    GraphSettingsData,
@@ -16,9 +16,9 @@ import {
    selectSettingsHaveChanged,
    setChangesHaveExecuted,
 } from "./Editor.store";
-import { generateAdjListFromInput } from "../../utils";
-import { setGraphSettingsData } from "../GraphView/GraphView.store";
-import { ColorButton } from "../../theme";
+import "./EditorSideBar.scss";
+import NodeDetails from "./NodeDetails/GraphNodes";
+import SelectMatrixFormula from "./SelectMatrixFormula/SelectMatrixFormula";
 
 interface EditorProps {}
 
@@ -36,7 +36,7 @@ const Editor: React.FC<EditorProps> = () => {
       e.preventDefault();
 
       const graphSettings: GraphSettingsData = {
-         graph: generateAdjListFromInput(nodeList),
+         graph: generateAdjListFromInputs(nodeList),
          matrixFormula: matrixFormulaVal,
          maxIter: maxIterVal,
          iterSpeed: iterSpeedVal,

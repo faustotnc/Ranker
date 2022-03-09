@@ -1,35 +1,48 @@
 import { NodeTable } from ".";
 import { MatrixFormula } from "../App/components/EditorSideBar/Editor.store";
 
+/** An entry of an adjacency list which represents a network. */
 export interface AdjacencyListEntry<T> {
    from: T;
    to: T[];
 }
 
+/** An adjacency list to represent a network. */
 export type AdjacencyList<T> = AdjacencyListEntry<T>[];
 
 export class Network<T> {
    private matrixFormula: MatrixFormula = MatrixFormula.Simple;
    private nodeTable;
 
+   /**
+    * A Network.
+    * @param list The adjacency list from which to construct the network
+    * @param mAlgo The matrix formulation used to construct the col-stochastic matrix.
+    */
    constructor(list: AdjacencyList<T>, mAlgo?: MatrixFormula) {
       this.nodeTable = new NodeTable(list);
       if (mAlgo) this.matrixFormula = mAlgo;
    }
 
+   /** The default network. */
    public static default() {
       return new Network<string>([]);
    }
 
+   /**
+    * Update the network with a new adjacency matrix and matrix formulation.
+    * @param list The adjacency list from which to construct the network
+    * @param mAlgo The matrix formulation used to construct the col-stochastic matrix.
+    */
    public updateWith(list: AdjacencyList<T>, mAlgo: MatrixFormula) {
       this.nodeTable = new NodeTable(list);
       this.matrixFormula = mAlgo;
    }
 
-   public get dim() {
-      return this.nodeTable.dim;
-   }
-
+   /**
+    * Gets the network's table of nodes.
+    * @returns The network's table of nodes.
+    */
    public getNodeTable() {
       return this.nodeTable;
    }
@@ -62,6 +75,10 @@ export class Network<T> {
       return this.nodeTable.getChildrenOf(nodeName);
    }
 
+   /**
+    * Gets the network's edges.
+    * @returns The network's edges.
+    */
    public getEdges() {
       return this.nodeTable.getEdges();
    }

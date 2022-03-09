@@ -1,12 +1,11 @@
 import { Box, Paper } from "@mui/material";
-import * as React from "react";
-import "./ViewMatrices.scss";
-import { Network } from "../../../../PageRank";
-
-import Heatmap from "highcharts/modules/heatmap.js";
-import HighchartsReact from "highcharts-react-official";
-
 import Highcharts from "highcharts";
+import HighchartsReact from "highcharts-react-official";
+import Heatmap from "highcharts/modules/heatmap.js";
+import * as React from "react";
+import { Network } from "../../../../PageRank";
+import "./ViewMatrices.scss";
+
 Heatmap(Highcharts);
 
 interface ViewMatricesProps {
@@ -142,46 +141,55 @@ const ViewMatrices: React.FC<ViewMatricesProps> = ({ isOpen, network }) => {
             <h1>Computed Matrices</h1>
          </Box>
 
-         <Box className="matrix-plots" sx={{ display: "flex", justifyContent: "center" }}>
-            <Box sx={{ width: "90%", maxWidth: "800px" }}>
-               <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
-                  <HighchartsReact
-                     highcharts={Highcharts}
-                     options={makeHeatmap("Adjacency Matrix", network.getNodes(), network.toAdjacencyMatrix(), false)}
-                  />
-               </Paper>
-               <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
-                  <HighchartsReact
-                     highcharts={Highcharts}
-                     options={makeHeatmap(
-                        "Simple Column-Stochastic",
-                        network.getNodes(),
-                        network.getNodeTable().semiColStochasticMatrix
-                     )}
-                  />
-               </Paper>
-               <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
-                  <HighchartsReact
-                     highcharts={Highcharts}
-                     options={makeHeatmap(
-                        "True Column-Stochastic",
-                        network.getNodes(),
-                        network.getNodeTable().trueColStochasticMatrix
-                     )}
-                  />
-               </Paper>
-               <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
-                  <HighchartsReact
-                     highcharts={Highcharts}
-                     options={makeHeatmap(
-                        "Google's PageRank",
-                        network.getNodes(),
-                        network.getNodeTable().computeGoogleColStochastic(0.8)
-                     )}
-                  />
-               </Paper>
+         {isOpen ? (
+            <Box className="matrix-plots" sx={{ display: "flex", justifyContent: "center" }}>
+               <Box sx={{ width: "90%", maxWidth: "800px" }}>
+                  <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
+                     <HighchartsReact
+                        highcharts={Highcharts}
+                        options={makeHeatmap(
+                           "Adjacency Matrix",
+                           network.getNodes(),
+                           network.toAdjacencyMatrix(),
+                           false
+                        )}
+                     />
+                  </Paper>
+                  <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
+                     <HighchartsReact
+                        highcharts={Highcharts}
+                        options={makeHeatmap(
+                           "Simple Column-Stochastic",
+                           network.getNodes(),
+                           network.getNodeTable().semiColStochasticMatrix
+                        )}
+                     />
+                  </Paper>
+                  <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
+                     <HighchartsReact
+                        highcharts={Highcharts}
+                        options={makeHeatmap(
+                           "True Column-Stochastic",
+                           network.getNodes(),
+                           network.getNodeTable().trueColStochasticMatrix
+                        )}
+                     />
+                  </Paper>
+                  <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
+                     <HighchartsReact
+                        highcharts={Highcharts}
+                        options={makeHeatmap(
+                           "Google's PageRank",
+                           network.getNodes(),
+                           network.getNodeTable().computeGoogleColStochastic(0.8)
+                        )}
+                     />
+                  </Paper>
+               </Box>
             </Box>
-         </Box>
+         ) : (
+            ""
+         )}
       </Paper>
    );
 };

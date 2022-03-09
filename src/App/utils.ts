@@ -1,15 +1,19 @@
 import { AdjacencyList } from "../PageRank";
 import { SingleInputNode } from "./components/EditorSideBar/Editor.store";
 
+/** An object containing strings as keys, and numbers as values. */
 export type StringNumberPairs = { [key: string]: number };
 
-export const calculateTrueViewportHeight = () => {
-   // First we get the viewport height and we multiply it by 1% to get a value for one vh unit
+/** Computes the true viewport height of the website. */
+export const calculateTrueVH = () => {
    const vh = document.documentElement.clientHeight * 0.01;
-   // Then we set the value in the --vh custom property to the root of the document
    document.body.style.setProperty("--vh", `${vh}px`);
 };
 
+/**
+ * Computes the URL query params.
+ * @returns An object containing the query params.
+ */
 export const getQueryStringParams = () => {
    const raw = window.location.search;
    const qs = /^[?#]/.test(raw) ? raw.slice(1) : raw;
@@ -23,7 +27,12 @@ export const getQueryStringParams = () => {
    return params;
 };
 
-// source: https://www.w3schools.com/js/js_cookies.asp
+/**
+ * Tries to get a cookie by name.
+ * source: https://www.w3schools.com/js/js_cookies.asp
+ * @param cname The cookie's name.
+ * @returns The cookie's value.
+ */
 export const getCookie = (cname: string) => {
    const name = cname + "=";
    const decodedCookie = decodeURIComponent(document.cookie);
@@ -44,7 +53,12 @@ export const getCookie = (cname: string) => {
    return "";
 };
 
-export const generateAdjListFromInput = (stringNodes: SingleInputNode[]) => {
+/**
+ * Constructs an adjacency matrix from a list of input nodes.
+ * @param stringNodes The list of input nodes.
+ * @returns An adjacency matrix.
+ */
+export const generateAdjListFromInputs = (stringNodes: SingleInputNode[]) => {
    const nodeList: AdjacencyList<string> = [];
    const parents: StringNumberPairs = {};
 

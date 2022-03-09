@@ -1,10 +1,9 @@
 import { Box, Paper } from "@mui/material";
 import * as React from "react";
-import { Network, NetworkGraph, PowerIterator } from "../../../PageRank";
+import { CytoGraph, Network, PowerIterator } from "../../../PageRank";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import GraphControls from "./GraphControls/GraphControls";
 import "./GraphView.scss";
-import NodeInfo from "./NodeInfo/NodeInfo";
 import {
    selectGraphSettingsData,
    selectProbVector,
@@ -13,6 +12,7 @@ import {
    setProbVector,
    setSelectedNode,
 } from "./GraphView.store";
+import NodeInfo from "./NodeInfo/NodeInfo";
 import ViewMatrices from "./ViewMatrices/ViewMatrices";
 
 interface GraphViewProps {}
@@ -20,7 +20,7 @@ interface GraphViewProps {}
 // Initialize external classes needed to compute PageRank
 const network = Network.default();
 const powerIterator = PowerIterator.default(network);
-const cytoGraph = new NetworkGraph();
+const cytoGraph = new CytoGraph();
 
 const GraphView: React.FC<GraphViewProps> = () => {
    const dispatch = useAppDispatch();
@@ -33,6 +33,32 @@ const GraphView: React.FC<GraphViewProps> = () => {
    const graphSettingsData = useAppSelector(selectGraphSettingsData);
    const probVector = useAppSelector(selectProbVector);
    const selectedNode = useAppSelector(selectSelectedNode);
+
+   const updateProbVector = React.useCallback(() => {
+      dispatch(setProbVector(powerIterator.getRVector()));
+      setCurrentStep(powerIterator.getCurrentStep());
+   }, [dispatch]);
+
+   const handleNextPowerIter = React.useCallback(() => {
+      powerIterator.next();
+      updateProbVector();
+   }, [updateProbVector]);
+
+   const handleRestartPowerIter = React.useCallback(() => {
+      powerIterator.reset();
+      updateProbVector();
+      dispatch(setPowerIterIsRunning(false));
+   }, [dispatch, updateProbVector]);
+
+   const handleStartPausePowerIter = React.useCallback(() => {
+      if (powerIterator.isPaused()) {
+         powerIterator.run(() => updateProbVector());
+         dispatch(setPowerIterIsRunning(true));
+      } else {
+         powerIterator.pause();
+         dispatch(setPowerIterIsRunning(false));
+      }
+   }, [dispatch, updateProbVector]);
 
    /** Mount the CytoGraph canvas once the element is ready. */
    React.useEffect(() => {
@@ -64,7 +90,7 @@ const GraphView: React.FC<GraphViewProps> = () => {
       });
       cytoGraph.onBgClick(() => dispatch(setSelectedNode(null)));
       cytoGraph.onEdgeClick(() => dispatch(setSelectedNode(null)));
-   }, [graphSettingsData]);
+   }, [dispatch, graphSettingsData, updateProbVector]);
 
    /** Update the Cytoscape graph every time the probability vector is updated.  */
    React.useEffect(() => cytoGraph.updateProb(probVector), [probVector]);
@@ -73,41 +99,11 @@ const GraphView: React.FC<GraphViewProps> = () => {
       if (selectedNode) cytoGraph.fitTo(selectedNode);
    }, [selectedNode]);
 
-   const updateProbVector = () => {
-      dispatch(setProbVector(powerIterator.getRVector()));
-      setCurrentStep(powerIterator.getCurrentStep());
-   };
-
-   const handleNextPowerIter = React.useCallback(() => {
-      powerIterator.next();
-      updateProbVector();
-   }, [dispatch]);
-
-   const handleRerunGraph = () => {
-      cytoGraph.rerun();
-   };
-
-   const handleRestartPowerIter = () => {
-      powerIterator.reset();
-      updateProbVector();
-      dispatch(setPowerIterIsRunning(false));
-   };
-
-   const handleStartPausePowerIter = () => {
-      if (powerIterator.isPaused()) {
-         powerIterator.run(() => updateProbVector());
-         dispatch(setPowerIterIsRunning(true));
-      } else {
-         powerIterator.pause();
-         dispatch(setPowerIterIsRunning(false));
-      }
-   };
-
    return (
       <Box className="graphView" height="100%" sx={{ display: "flex", flexDirection: "column" }}>
          <Paper variant="outlined" elevation={0} className="graph-controls-bar">
             <GraphControls
-               onRerunGraph={handleRerunGraph}
+               onRerunGraph={() => cytoGraph.rerun()}
                onNextPowerIter={handleNextPowerIter}
                onRestartPowerIteration={handleRestartPowerIter}
                onStartPausePowerIter={handleStartPausePowerIter}

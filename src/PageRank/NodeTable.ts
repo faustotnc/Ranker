@@ -7,17 +7,20 @@ export class NodeTable<T> {
    private adjMatrix: (0 | 1)[][] = [];
    public semiColStochasticMatrix: number[][] = [];
    public trueColStochasticMatrix: number[][] = [];
-   public googColStochasticMatrix: number[][] = [];
+   public googColStochasticMatrix: number[][] | null = null;
 
-   // TODO: This is clearly very slow. We can definitely do better.
-   constructor(private list: AdjacencyListEntry<T>[]) {
+   /**
+    * A Node Table. Helps to analyze the relationships between nodes in a network without
+    * needing to re-execute many loops over and over.
+    * @param list The adjacency list from which to compute the node table.
+    */
+   constructor(list: AdjacencyListEntry<T>[]) {
       // Compose the flat list of nodes.
       for (const node of list) {
          if (!this._nodes.includes(node.from)) this._nodes.push(node.from);
 
          for (const child of node.to) {
             if (!this._nodes.includes(child)) this._nodes.push(child);
-
             this._edges.push([node.from, child]);
          }
       }
@@ -38,6 +41,10 @@ export class NodeTable<T> {
       this.trueColStochasticMatrix = this.computeFullColStochastic();
    }
 
+   /**
+    * Constructs a "almost" column-stochastic matrix from the network's adjacency matrix.
+    * @returns An "almost" column-stochastic version of the network's adjacency matrix.
+    */
    private computeSemiColStochastic() {
       const grid = [];
       for (let j = 0; j < this.dim; j++) {
@@ -61,6 +68,10 @@ export class NodeTable<T> {
       return grid;
    }
 
+   /**
+    * Constructs a column-stochastic matrix from the network's adjacency matrix.
+    * @returns A column-stochastic version of the network's adjacency matrix.
+    */
    private computeFullColStochastic() {
       const grid = [];
       for (let j = 0; j < this.dim; j++) {
@@ -84,22 +95,38 @@ export class NodeTable<T> {
       return grid;
    }
 
+   /**
+    * Constructs a Google PageRank matrix from the network's adjacency matrix.
+    * @param beta The probability threshold.
+    * @returns A "Google PageRank" version of the network's adjacency matrix.
+    */
    public computeGoogleColStochastic(beta: number) {
-      const grid = [];
-      for (let i = 0; i < this.dim; i++) {
-         grid[i] = Array(this.dim);
-      }
+      let grid: number[][] = [];
 
-      for (let i = 0; i < this.dim; i++) {
-         for (let j = 0; j < this.dim; j++) {
-            const S_ix = this.trueColStochasticMatrix[i][j];
-            grid[i][j] = beta * S_ix + (1 - beta) / this.dim;
+      if (this.googColStochasticMatrix == null) {
+         for (let i = 0; i < this.dim; i++) {
+            grid[i] = Array(this.dim);
          }
+
+         for (let i = 0; i < this.dim; i++) {
+            for (let j = 0; j < this.dim; j++) {
+               const S_ix = this.trueColStochasticMatrix[i][j];
+               grid[i][j] = beta * S_ix + (1 - beta) / this.dim;
+            }
+         }
+
+         this.googColStochasticMatrix = grid;
+      } else {
+         grid = this.googColStochasticMatrix;
       }
 
       return grid;
    }
 
+   /**
+    * Gets the nodes in the network.
+    * @returns The nodes of the network.
+    */
    public getNodes() {
       return this._nodes;
    }

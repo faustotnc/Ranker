@@ -1,11 +1,9 @@
-import React from "react";
-import "./GraphNodes.scss";
-import { Button } from "@mui/material";
-import { addNode } from "../Editor.store";
-import { Box, IconButton, TextField } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { removeNode, updateNode } from "../Editor.store";
+import { Box, Button, IconButton, TextField } from "@mui/material";
+import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
+import { addNode, removeNode, updateNode } from "../Editor.store";
+import "./GraphNodes.scss";
 
 interface NodeDetailsProps {}
 

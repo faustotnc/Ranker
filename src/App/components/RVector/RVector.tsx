@@ -1,10 +1,10 @@
-import { Box } from "@mui/system";
 import { useTheme } from "@mui/material/styles";
+import { Box } from "@mui/system";
 import * as React from "react";
-import { getColorCode } from "../../../PageRank";
+import { getColorCodes } from "../../../PageRank";
 import { useAppDispatch, useAppSelector } from "../../hooks";
-import "./RVector.scss";
 import { selectProbVector, setSelectedNode } from "../GraphView/GraphView.store";
+import "./RVector.scss";
 
 interface RVectorProps {}
 
@@ -18,7 +18,7 @@ const RVector: React.FC<RVectorProps> = () => {
       const cells = Object.entries(probVector).map((p) => {
          const probMin = Math.min(...Object.values(probVector).map((p) => p * 100));
          const probMax = Math.max(...Object.values(probVector).map((p) => p * 100));
-         const color = getColorCode(p[1] * 100, probMin, probMax);
+         const color = getColorCodes(p[1] * 100, probMin, probMax);
 
          return (
             <Box
@@ -36,7 +36,7 @@ const RVector: React.FC<RVectorProps> = () => {
       });
 
       setVectorCells(cells);
-   }, [probVector]);
+   }, [dispatch, probVector]);
 
    const vectorMathImage =
       currentTheme.palette.mode === "light"

@@ -8,6 +8,12 @@ export class PowerIterator {
    private r: number[] = [];
    private currentStep = 0;
 
+   /**
+    * A Power Iterator. Used to compute the principal eigenvector of a matrix.
+    * @param network The network used for power iteration
+    * @param maxIter The maximum number of iterations
+    * @param iterSpeed The speed at which to execute iterations (iterations/second)
+    */
    constructor(private network: Network<string>, private maxIter = 100, private iterSpeed = 1) {
       this.resetWith(network, maxIter, iterSpeed);
    }
@@ -32,6 +38,10 @@ export class PowerIterator {
       }, {});
    }
 
+   /**
+    * Gets the current step in the power iteration.
+    * @returns The current iteration step.
+    */
    public getCurrentStep() {
       return this.currentStep;
    }

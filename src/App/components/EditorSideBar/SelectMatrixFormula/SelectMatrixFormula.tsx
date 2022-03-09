@@ -1,9 +1,9 @@
 import { FormControl, MenuItem, Select, SelectChangeEvent, Typography } from "@mui/material";
 import * as React from "react";
 import { useAppDispatch, useAppSelector } from "../../../hooks";
+import KatexEq from "../../KatexEq/KetexEq";
 import { MatrixFormula, setMatrixFormula } from "../Editor.store";
 import "./SelectMatrixFormula.scss";
-import KatexEq from "../../KatexEq/KetexEq";
 
 interface SelectMatrixFormulaProps {}
 

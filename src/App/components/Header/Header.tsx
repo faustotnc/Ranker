@@ -1,17 +1,17 @@
-import * as React from "react";
-import { AppBar, IconButton, Paper, Toolbar, Typography, SvgIcon, Button, Box, Menu, TextField } from "@mui/material";
-import MenuIcon from "@mui/icons-material/Menu";
-import BrightIcon from "@mui/icons-material/Brightness7";
 import DarkIcon from "@mui/icons-material/Brightness4";
+import BrightIcon from "@mui/icons-material/Brightness7";
 import BrightnessAutoIcon from "@mui/icons-material/BrightnessAuto";
-import ShareIcon from "@mui/icons-material/IosShare";
 import InfoIcon from "@mui/icons-material/Info";
+import ShareIcon from "@mui/icons-material/IosShare";
+import MenuIcon from "@mui/icons-material/Menu";
+import { AppBar, Box, Button, IconButton, Menu, Paper, SvgIcon, TextField, Toolbar, Typography } from "@mui/material";
+import * as React from "react";
 import Logo from "../../../Full-Logo05x.png";
-import "./Header.scss";
-import { useAppDispatch, useAppSelector } from "../../hooks";
 import { rotateTheme, toggleOpenEditor } from "../../AppSettings.store";
+import { useAppDispatch, useAppSelector } from "../../hooks";
 import { GraphSettingsData } from "../EditorSideBar/Editor.store";
 import { selectGraphSettingsData } from "../GraphView/GraphView.store";
+import "./Header.scss";
 
 interface HeaderProps {}
 
