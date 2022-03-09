@@ -6,22 +6,27 @@ import { useAppDispatch, useAppSelector } from "../../hooks";
 import "./RVector.scss";
 import { selectProbVector, setSelectedNode } from "../GraphView/GraphView.store";
 
-interface RVectorProps { }
+interface RVectorProps {}
 
 const RVector: React.FC<RVectorProps> = () => {
    const dispatch = useAppDispatch();
-   let currentTheme = useTheme();
-   let probVector = useAppSelector(selectProbVector);
+   const currentTheme = useTheme();
+   const probVector = useAppSelector(selectProbVector);
    const [vectorCells, setVectorCells] = React.useState<JSX.Element[]>([]);
 
    React.useEffect(() => {
-      let cells = Object.entries(probVector).map((p) => {
-         let probMin = Math.min(...Object.values(probVector).map((p) => p * 100));
-         let probMax = Math.max(...Object.values(probVector).map((p) => p * 100));
-         let color = getColorCode(p[1] * 100, probMin, probMax);
+      const cells = Object.entries(probVector).map((p) => {
+         const probMin = Math.min(...Object.values(probVector).map((p) => p * 100));
+         const probMax = Math.max(...Object.values(probVector).map((p) => p * 100));
+         const color = getColorCode(p[1] * 100, probMin, probMax);
 
          return (
-            <Box className="cell" sx={{ display: "flex", alignItems: "center" }} key={p[0]} onClick={() => dispatch(setSelectedNode(p[0]))}>
+            <Box
+               className="cell"
+               sx={{ display: "flex", alignItems: "center" }}
+               key={p[0]}
+               onClick={() => dispatch(setSelectedNode(p[0]))}
+            >
                <Box className="cell-value" sx={{ color: color.fg, backgroundColor: color.bg }}>
                   {+(p[1] * 100).toFixed(3)}
                </Box>
@@ -33,7 +38,7 @@ const RVector: React.FC<RVectorProps> = () => {
       setVectorCells(cells);
    }, [probVector]);
 
-   let vectorMathImage =
+   const vectorMathImage =
       currentTheme.palette.mode === "light"
          ? "https://chart.apis.google.com/chart?cht=tx&chl=%5Cvec%7Br%7D%20&chf=bg%2Cs%2CFFFFFF80&chco=000000&chs=50"
          : "https://chart.apis.google.com/chart?cht=tx&chl=%5Cvec%7Br%7D%20&chf=bg%2Cs%2C202226&chco=FFFFFF&chs=50";

@@ -29,7 +29,7 @@ export class NodeTable<T> {
          this.adjMatrix.push([]); // current row
 
          for (const jth of this._nodes) {
-            let hasLink = Number(this.hasLink(ith, jth)) as 0 | 1;
+            const hasLink = Number(this.hasLink(ith, jth)) as 0 | 1;
             this.adjMatrix[this.adjMatrix.length - 1].push(hasLink);
          }
       }
@@ -45,10 +45,10 @@ export class NodeTable<T> {
       }
 
       for (let i = 0; i < this.dim; i++) {
-         let di = this.getChildrenOf(this._nodes[i]).length;
+         const di = this.getChildrenOf(this._nodes[i]).length;
 
          for (let j = 0; j < this.dim; j++) {
-            let hasLink = this.adjMatrix[i][j];
+            const hasLink = this.adjMatrix[i][j];
 
             if (di > 0) {
                grid[j][i] = hasLink / di;
@@ -68,10 +68,10 @@ export class NodeTable<T> {
       }
 
       for (let i = 0; i < this.dim; i++) {
-         let di = this.getChildrenOf(this._nodes[i]).length;
+         const di = this.getChildrenOf(this._nodes[i]).length;
 
          for (let j = 0; j < this.dim; j++) {
-            let hasLink = this.adjMatrix[i][j];
+            const hasLink = this.adjMatrix[i][j];
 
             if (di > 0) {
                grid[j][i] = hasLink / di;
@@ -92,7 +92,7 @@ export class NodeTable<T> {
 
       for (let i = 0; i < this.dim; i++) {
          for (let j = 0; j < this.dim; j++) {
-            let S_ix = this.trueColStochasticMatrix[i][j];
+            const S_ix = this.trueColStochasticMatrix[i][j];
             grid[i][j] = beta * S_ix + (1 - beta) / this.dim;
          }
       }
@@ -133,7 +133,7 @@ export class NodeTable<T> {
     * @returns An array of nodes that are all connected to this child.
     */
    public getParentsOf(node: T) {
-      let parents: T[] = [];
+      const parents: T[] = [];
 
       for (let idx = 0; idx < this._edges.length; idx++) {
          const edge = this._edges[idx];
@@ -149,7 +149,7 @@ export class NodeTable<T> {
     * @returns An array of nodes that are all children of this node.
     */
    public getChildrenOf(node: T) {
-      let parents: T[] = [];
+      const parents: T[] = [];
 
       for (let idx = 0; idx < this._edges.length; idx++) {
          const edge = this._edges[idx];

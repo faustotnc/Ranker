@@ -9,7 +9,7 @@ import { selectProbVector, selectSelectedNode } from "../GraphView.store";
 
 interface NodeInfoProps {
    network: Network<string>;
-   cytoGraph: NetworkGraph
+   cytoGraph: NetworkGraph;
 }
 
 const NodeInfo: React.FC<NodeInfoProps> = (props) => {
@@ -18,29 +18,27 @@ const NodeInfo: React.FC<NodeInfoProps> = (props) => {
    const probMin = Math.min(...Object.values(probVector).map((p) => p * 100));
    const probMax = Math.max(...Object.values(probVector).map((p) => p * 100));
 
-   const nodeColor = selectedNode
-      ? getColorCode(probVector[selectedNode] * 100, probMin, probMax)
-      : { bg: "", fg: "" };
+   const nodeColor = selectedNode ? getColorCode(probVector[selectedNode] * 100, probMin, probMax) : { bg: "", fg: "" };
 
    let nodeParents = "*None*";
    if (selectedNode) {
-      let parents = props.network.getParentsOf(selectedNode);
+      const parents = props.network.getParentsOf(selectedNode);
 
       if (parents.length > 4) {
-         nodeParents = parents.slice(0, 4).join(", ") + " (...)"
+         nodeParents = parents.slice(0, 4).join(", ") + " (...)";
       } else if (parents.length > 0) {
-         nodeParents = parents.slice(0, 4).join(", ")
+         nodeParents = parents.slice(0, 4).join(", ");
       }
    }
 
    let nodeChildren = "*None*";
    if (selectedNode) {
-      let parents = props.network.getChildrenOf(selectedNode);
+      const parents = props.network.getChildrenOf(selectedNode);
 
       if (parents.length > 4) {
-         nodeChildren = parents.slice(0, 4).join(", ") + " (...)"
+         nodeChildren = parents.slice(0, 4).join(", ") + " (...)";
       } else if (parents.length > 0) {
-         nodeChildren = parents.slice(0, 4).join(", ")
+         nodeChildren = parents.slice(0, 4).join(", ");
       }
    }
 
@@ -58,7 +56,7 @@ const NodeInfo: React.FC<NodeInfoProps> = (props) => {
          >
             <span>Select a Node</span>
          </Box>
-      )
+      );
    } else {
       return (
          <Box
@@ -79,7 +77,9 @@ const NodeInfo: React.FC<NodeInfoProps> = (props) => {
                   alignItems: "center",
                }}
             >
-               <div className="active-node" style={{ background: nodeColor.bg, color: nodeColor.fg }}>{selectedNode}</div>
+               <div className="active-node" style={{ background: nodeColor.bg, color: nodeColor.fg }}>
+                  {selectedNode}
+               </div>
 
                <div className="node-detail rank">
                   Rank: <span>{+(probVector[selectedNode] * 100).toFixed(3)}</span>
@@ -92,17 +92,25 @@ const NodeInfo: React.FC<NodeInfoProps> = (props) => {
                </div>
                {/* out minus in */}
                <div className="node-detail retention">
-                  Divergence: <span>{props.network.getChildrenOf(selectedNode).length - props.network.getParentsOf(selectedNode).length}</span>
+                  Divergence:{" "}
+                  <span>
+                     {props.network.getChildrenOf(selectedNode).length -
+                        props.network.getParentsOf(selectedNode).length}
+                  </span>
                </div>
             </Box>
 
             <Tooltip title="Focus Node" placement="top">
-               <IconButton onClick={() => props.cytoGraph.fitTo(selectedNode!)}>
+               <IconButton
+                  onClick={() => {
+                     if (selectedNode) props.cytoGraph.fitTo(selectedNode);
+                  }}
+               >
                   <CenterIcon />
                </IconButton>
             </Tooltip>
          </Box>
-      )
+      );
    }
 };
 

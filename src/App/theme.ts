@@ -1,6 +1,6 @@
 import { PaletteMode } from "@mui/material";
 import { ThemeOptions } from "@mui/material/styles";
-import { styled } from '@mui/material/styles';
+import { styled } from "@mui/material/styles";
 import { Button } from "@mui/material";
 
 export type ThemeType = PaletteMode | "auto";
@@ -45,7 +45,7 @@ export const getDesignTokens = (mode: PaletteMode) => (mode === "light" ? lightT
 export const ColorButton = styled(Button)(() => ({
    color: "#ffffff",
    backgroundColor: "#4AAF61",
-   '&:hover': {
+   "&:hover": {
       color: "#ffffff",
       backgroundColor: "#006428",
    },

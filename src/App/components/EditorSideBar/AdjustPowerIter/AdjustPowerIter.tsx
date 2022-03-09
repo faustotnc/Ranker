@@ -5,19 +5,25 @@ import KatexEq from "../../KatexEq/KetexEq";
 import { selectIterSpeed, selectMaxIter, setIterSpeed, setMaxIter } from "../Editor.store";
 import "./AdjustPowerIter.scss";
 
-interface AdjustPowerIterProps { }
+interface AdjustPowerIterProps {}
 
 const AdjustPowerIter: React.FC<AdjustPowerIterProps> = () => {
    const dispatch = useAppDispatch();
    const maxIter = useAppSelector(selectMaxIter);
    const iterSpeed = useAppSelector(selectIterSpeed);
 
-   const handleChangeMaxIter = (e: any) => {
-      dispatch(setMaxIter(Number(e.target.value)));
+   const handleChangeMaxIter = (e: MouseEvent) => {
+      if (e.target) {
+         const n = Number((e.target as HTMLInputElement).value);
+         dispatch(setMaxIter(n));
+      }
    };
 
-   const handleChangeIterSpeed = (e: any) => {
-      dispatch(setIterSpeed(Number(e.target.value)));
+   const handleChangeIterSpeed = (e: MouseEvent) => {
+      if (e.target) {
+         const n = Number((e.target as HTMLInputElement).value);
+         dispatch(setIterSpeed(n));
+      }
    };
 
    return (
@@ -34,8 +40,8 @@ const AdjustPowerIter: React.FC<AdjustPowerIterProps> = () => {
 
          <Typography variant="caption" component="p" className="caption-text">
             However, in the case of PageRank, the matrix <KatexEq>M</KatexEq> is column-stochastic and{" "}
-            <KatexEq>{"\\vec{r}"}</KatexEq> is a probability vector, therefore, <KatexEq>{"||M \\vec{r}_{n} || = 1"}</KatexEq>, and
-            we can reduce the power iteration formula to:
+            <KatexEq>{"\\vec{r}"}</KatexEq> is a probability vector, therefore,{" "}
+            <KatexEq>{"||M \\vec{r}_{n} || = 1"}</KatexEq>, and we can reduce the power iteration formula to:
          </Typography>
 
          <div className="equation">
@@ -57,7 +63,7 @@ const AdjustPowerIter: React.FC<AdjustPowerIterProps> = () => {
                valueLabelDisplay="auto"
                aria-label="Iterations"
                value={maxIter}
-               onChange={handleChangeMaxIter}
+               onChange={(e) => handleChangeMaxIter(e as MouseEvent)}
             />
             <span>100</span>
          </Stack>
@@ -72,12 +78,12 @@ const AdjustPowerIter: React.FC<AdjustPowerIterProps> = () => {
                defaultValue={1}
                // getAriaValueText={valuetext}
                valueLabelDisplay="auto"
-               step={0.10}
+               step={0.1}
                marks
-               min={0.10}
+               min={0.1}
                max={3}
                value={iterSpeed}
-               onChange={handleChangeIterSpeed}
+               onChange={(e) => handleChangeIterSpeed(e as MouseEvent)}
             />
             <span>Fast</span>
          </Stack>

@@ -1,4 +1,4 @@
-import { Button, Paper, Typography, Divider, IconButton, Box } from "@mui/material";
+import { Paper, Typography, Divider, IconButton, Box } from "@mui/material";
 import * as React from "react";
 import "./EditorSideBar.scss";
 import NodeDetails from "./NodeDetails/GraphNodes";
@@ -7,13 +7,20 @@ import SelectMatrixFormula from "./SelectMatrixFormula/SelectMatrixFormula";
 import BackIcon from "@mui/icons-material/NavigateBefore";
 import { toggleOpenEditor } from "../../AppSettings.store";
 import AdjustPowerIter from "./AdjustPowerIter/AdjustPowerIter";
-import { GraphSettingsData, selectIterSpeed, selectMatrixFormula, selectMaxIter, selectNodeList, selectSettingsHaveChanged, setChangesHaveExecuted } from "./Editor.store";
+import {
+   GraphSettingsData,
+   selectIterSpeed,
+   selectMatrixFormula,
+   selectMaxIter,
+   selectNodeList,
+   selectSettingsHaveChanged,
+   setChangesHaveExecuted,
+} from "./Editor.store";
 import { generateAdjListFromInput } from "../../utils";
 import { setGraphSettingsData } from "../GraphView/GraphView.store";
 import { ColorButton } from "../../theme";
 
-
-interface EditorProps { }
+interface EditorProps {}
 
 const Editor: React.FC<EditorProps> = () => {
    const dispatch = useAppDispatch();
@@ -25,15 +32,15 @@ const Editor: React.FC<EditorProps> = () => {
    const maxIterVal = useAppSelector(selectMaxIter);
    const iterSpeedVal = useAppSelector(selectIterSpeed);
 
-   const handleUpdateGraph = (e: any) => {
+   const handleUpdateGraph = (e: React.BaseSyntheticEvent) => {
       e.preventDefault();
 
-      let graphSettings: GraphSettingsData = {
+      const graphSettings: GraphSettingsData = {
          graph: generateAdjListFromInput(nodeList),
          matrixFormula: matrixFormulaVal,
          maxIter: maxIterVal,
          iterSpeed: iterSpeedVal,
-      }
+      };
 
       dispatch(setGraphSettingsData(graphSettings));
       dispatch(setChangesHaveExecuted());

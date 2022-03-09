@@ -3,15 +3,15 @@ import * as React from "react";
 import "./ViewMatrices.scss";
 import { Network } from "../../../../PageRank";
 
-import Heatmap from 'highcharts/modules/heatmap.js';
-import HighchartsReact from 'highcharts-react-official';
+import Heatmap from "highcharts/modules/heatmap.js";
+import HighchartsReact from "highcharts-react-official";
 
-const Highcharts = require('highcharts');
+import Highcharts from "highcharts";
 Heatmap(Highcharts);
 
 interface ViewMatricesProps {
-   isOpen: boolean,
-   network: Network<string>
+   isOpen: boolean;
+   network: Network<string>;
 }
 
 const toHighChartHeatmap = (matrix: number[][]) => {
@@ -22,19 +22,19 @@ const toHighChartHeatmap = (matrix: number[][]) => {
 
       for (let i = 0; i < row.length; i++) {
          const element = row[i];
-         data.push([i, row_idx, element])
+         data.push([i, row_idx, element]);
       }
    }
 
    return data;
-}
+};
 
-const getPointCategoryName = (point: any, dimension: string) => {
-   let series = point.series;
-   let isY = dimension === 'y';
-   let axis = series[isY ? 'yAxis' : 'xAxis'];
-   return axis.categories[point[isY ? 'y' : 'x']];
-}
+const getPointCategoryName = (point: Highcharts.Point, dimension: string) => {
+   const series = point.series;
+   const isY = dimension === "y";
+   const axis = series[isY ? "yAxis" : "xAxis"];
+   return axis.categories[point[isY ? "y" : "x"] as number];
+};
 
 const makeHeatmap = (title: string, categories: string[], matrix: number[][], fixedDecimals = true) => {
    const charOptions1: Highcharts.Options = {
@@ -53,13 +53,13 @@ const makeHeatmap = (title: string, categories: string[], matrix: number[][], fi
          categories: categories,
          opposite: true,
          title: {
-            text: null
+            text: null,
          },
       },
       yAxis: {
          categories: categories,
          title: {
-            text: null
+            text: null,
          },
          reversed: true,
       },
@@ -69,89 +69,121 @@ const makeHeatmap = (title: string, categories: string[], matrix: number[][], fi
          maxColor: "#4AAF61",
       },
       legend: {
-         align: 'right',
-         layout: 'vertical',
+         align: "right",
+         layout: "vertical",
          margin: 0,
          symbolHeight: 280,
          enabled: false,
       },
       tooltip: {
          formatter: function () {
-            const node1 = getPointCategoryName(this.point, 'y');
-            const node2 = getPointCategoryName(this.point, 'x');
+            const node1 = getPointCategoryName(this.point, "y");
+            const node2 = getPointCategoryName(this.point, "x");
             // round to two six decimal places
-            const rounded = Math.round((this.point.value || 0) * 1000000) / 1000000
+            const rounded = Math.round((this.point.value || 0) * 1000000) / 1000000;
             const value = fixedDecimals ? rounded : this.point.value;
             return `<b>${node1}</b> to <b>${node2}</b>: ${value}`;
          },
       },
-      series: [{
-         name: 'Adjacency',
-         borderWidth: 0,
-         type: "heatmap",
-         data: toHighChartHeatmap(matrix),
-         dataLabels: {
-            enabled: true,
-            color: '#000000',
-            style: {
-               textOutline: ""
+      series: [
+         {
+            name: "Adjacency",
+            borderWidth: 0,
+            type: "heatmap",
+            data: toHighChartHeatmap(matrix),
+            dataLabels: {
+               enabled: true,
+               color: "#000000",
+               style: {
+                  textOutline: "",
+               },
+               formatter: function () {
+                  // round to two two decimal places
+                  const rounded = Math.round((this.point.value || 0) * 100) / 100;
+                  return fixedDecimals ? rounded : this.point.value;
+               },
             },
-            formatter: function () {
-               // round to two two decimal places
-               let rounded = Math.round((this.point.value || 0) * 100) / 100
-               return fixedDecimals ? rounded : this.point.value;
-            }
          },
-      }],
+      ],
       responsive: {
-         rules: [{
-            condition: {
-               maxWidth: 500
+         rules: [
+            {
+               condition: {
+                  maxWidth: 500,
+               },
+               chartOptions: {
+                  series: [
+                     {
+                        type: "heatmap",
+                        dataLabels: {
+                           formatter: function () {
+                              // round to two one decimal place
+                              const rounded = Math.round((this.point.value || 0) * 10) / 10;
+                              return fixedDecimals ? rounded : this.point.value;
+                           },
+                        },
+                     },
+                  ],
+               },
             },
-            chartOptions: {
-               series: [{
-                  type: "heatmap",
-                  dataLabels: {
-                     formatter: function () {
-                        // round to two one decimal place
-                        let rounded = Math.round((this.point.value || 0) * 10) / 10
-                        return fixedDecimals ? rounded : this.point.value;
-                     }
-                  },
-               }]
-            }
-         }]
-      }
+         ],
+      },
    };
 
    return charOptions1;
-}
+};
 
 const ViewMatrices: React.FC<ViewMatricesProps> = ({ isOpen, network }) => {
    const isOpenClassName = isOpen ? "isOpen" : "";
 
-   return <Paper elevation={0} sx={{ boxShadow: "none" }} className={"view-matrices-container " + isOpenClassName}>
-      <Box className="title" sx={{ textAlign: "center" }}>
-         <h1>Computed Matrices</h1>
-      </Box>
-
-      <Box className="matrix-plots" sx={{ display: "flex", justifyContent: "center" }}>
-         <Box sx={{ width: "90%", maxWidth: "800px" }}>
-            <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
-               <HighchartsReact highcharts={Highcharts} options={makeHeatmap("Adjacency Matrix", network.getNodes(), network.toAdjacencyMatrix(), false)} />
-            </Paper>
-            <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
-               <HighchartsReact highcharts={Highcharts} options={makeHeatmap("Simple Column-Stochastic", network.getNodes(), network.getNodeTable().semiColStochasticMatrix)} />
-            </Paper>
-            <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
-               <HighchartsReact highcharts={Highcharts} options={makeHeatmap("True Column-Stochastic", network.getNodes(), network.getNodeTable().trueColStochasticMatrix)} />
-            </Paper>
-            <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
-               <HighchartsReact highcharts={Highcharts} options={makeHeatmap("Google's PageRank", network.getNodes(), network.getNodeTable().computeGoogleColStochastic(0.8))} />
-            </Paper>
+   return (
+      <Paper elevation={0} sx={{ boxShadow: "none" }} className={"view-matrices-container " + isOpenClassName}>
+         <Box className="title" sx={{ textAlign: "center" }}>
+            <h1>Computed Matrices</h1>
          </Box>
-      </Box>
-   </Paper>;
-}
+
+         <Box className="matrix-plots" sx={{ display: "flex", justifyContent: "center" }}>
+            <Box sx={{ width: "90%", maxWidth: "800px" }}>
+               <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
+                  <HighchartsReact
+                     highcharts={Highcharts}
+                     options={makeHeatmap("Adjacency Matrix", network.getNodes(), network.toAdjacencyMatrix(), false)}
+                  />
+               </Paper>
+               <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
+                  <HighchartsReact
+                     highcharts={Highcharts}
+                     options={makeHeatmap(
+                        "Simple Column-Stochastic",
+                        network.getNodes(),
+                        network.getNodeTable().semiColStochasticMatrix
+                     )}
+                  />
+               </Paper>
+               <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
+                  <HighchartsReact
+                     highcharts={Highcharts}
+                     options={makeHeatmap(
+                        "True Column-Stochastic",
+                        network.getNodes(),
+                        network.getNodeTable().trueColStochasticMatrix
+                     )}
+                  />
+               </Paper>
+               <Paper className="chart-wrapper" elevation={0} variant="outlined" sx={{ borderRadius: "8px" }}>
+                  <HighchartsReact
+                     highcharts={Highcharts}
+                     options={makeHeatmap(
+                        "Google's PageRank",
+                        network.getNodes(),
+                        network.getNodeTable().computeGoogleColStochastic(0.8)
+                     )}
+                  />
+               </Paper>
+            </Box>
+         </Box>
+      </Paper>
+   );
+};
 
 export default ViewMatrices;

@@ -1,5 +1,5 @@
-import { Box, LinearProgress, Paper } from "@mui/material";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { Box, Paper } from "@mui/material";
+import * as React from "react";
 import { Network, NetworkGraph, PowerIterator } from "../../../PageRank";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import GraphControls from "./GraphControls/GraphControls";
@@ -8,35 +8,41 @@ import NodeInfo from "./NodeInfo/NodeInfo";
 import {
    selectGraphSettingsData,
    selectProbVector,
+   selectSelectedNode,
    setPowerIterIsRunning,
    setProbVector,
    setSelectedNode,
 } from "./GraphView.store";
 import ViewMatrices from "./ViewMatrices/ViewMatrices";
 
-interface GraphViewProps { }
+interface GraphViewProps {}
 
 // Initialize external classes needed to compute PageRank
-let network = Network.default();
-let powerIterator = PowerIterator.default(network);
-let cytoGraph = new NetworkGraph();
+const network = Network.default();
+const powerIterator = PowerIterator.default(network);
+const cytoGraph = new NetworkGraph();
 
 const GraphView: React.FC<GraphViewProps> = () => {
    const dispatch = useAppDispatch();
-   const cyContainer = useRef(null);
-   const [viewMatricesIsOpen, setViewMatricesIsOpen] = useState<boolean>(false);
+   const cyContainer = React.useRef(null);
+   const [viewMatricesIsOpen, setViewMatricesIsOpen] = React.useState<boolean>(false);
 
-   const [currentStep, setCurrentStep] = useState<number>(0);
+   const [currentStep, setCurrentStep] = React.useState<number>(0);
 
    // Internal State of the GraphView Store
    const graphSettingsData = useAppSelector(selectGraphSettingsData);
    const probVector = useAppSelector(selectProbVector);
+   const selectedNode = useAppSelector(selectSelectedNode);
 
    /** Mount the CytoGraph canvas once the element is ready. */
-   useEffect(() => cytoGraph.mountOn(cyContainer.current!), [cyContainer]);
+   React.useEffect(() => {
+      if (cyContainer.current) {
+         cytoGraph.mountOn(cyContainer.current);
+      }
+   }, [cyContainer]);
 
    /** Executed every time the graph settings data are updated */
-   useEffect(() => {
+   React.useEffect(() => {
       // Update the network with the current adjacency list and matrix formula
       network.updateWith(graphSettingsData.graph, graphSettingsData.matrixFormula);
 
@@ -50,23 +56,29 @@ const GraphView: React.FC<GraphViewProps> = () => {
       cytoGraph.clear();
       cytoGraph.addNetwork(network.getEdges(), powerIterator.getRVector()).rerun();
 
-      //
+      // Prevent adding many listeners every time the graph is updated
       cytoGraph.removeAllClickListeners();
 
-      cytoGraph.onNodeClick((ev) => dispatch(setSelectedNode(ev.target.id())));
+      cytoGraph.onNodeClick((ev) => {
+         dispatch(setSelectedNode(ev.target.id()));
+      });
       cytoGraph.onBgClick(() => dispatch(setSelectedNode(null)));
       cytoGraph.onEdgeClick(() => dispatch(setSelectedNode(null)));
    }, [graphSettingsData]);
 
    /** Update the Cytoscape graph every time the probability vector is updated.  */
-   useEffect(() => cytoGraph.updateProb(probVector), [probVector]);
+   React.useEffect(() => cytoGraph.updateProb(probVector), [probVector]);
+
+   React.useEffect(() => {
+      if (selectedNode) cytoGraph.fitTo(selectedNode);
+   }, [selectedNode]);
 
    const updateProbVector = () => {
       dispatch(setProbVector(powerIterator.getRVector()));
-      setCurrentStep(powerIterator.getCurrentStep())
-   }
+      setCurrentStep(powerIterator.getCurrentStep());
+   };
 
-   const handleNextPowerIter = useCallback(() => {
+   const handleNextPowerIter = React.useCallback(() => {
       powerIterator.next();
       updateProbVector();
    }, [dispatch]);
@@ -110,14 +122,16 @@ const GraphView: React.FC<GraphViewProps> = () => {
 
          <Box className="main-view">
             <ViewMatrices isOpen={viewMatricesIsOpen} network={network}></ViewMatrices>
-            <Paper elevation={0} sx={{ boxShadow: "none" }} className={"graph-container " + (viewMatricesIsOpen ? "isClosed" : "")} ref={cyContainer}></Paper>
+            <Paper
+               elevation={0}
+               sx={{ boxShadow: "none" }}
+               className={"graph-container " + (viewMatricesIsOpen ? "isClosed" : "")}
+               ref={cyContainer}
+            ></Paper>
          </Box>
 
          <Paper variant="outlined" elevation={0} className="node-info-bar">
-            <NodeInfo
-               network={network}
-               cytoGraph={cytoGraph}
-            ></NodeInfo>
+            <NodeInfo network={network} cytoGraph={cytoGraph}></NodeInfo>
          </Paper>
       </Box>
    );

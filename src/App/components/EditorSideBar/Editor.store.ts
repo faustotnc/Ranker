@@ -100,5 +100,5 @@ export const selectNodeList = (state: RootState) => state.editor.nodes;
 export default editorSlice.reducer;
 
 export const getGraphSettings = () => {
-   console.log("Settings")
-}
+   console.log("Settings");
+};

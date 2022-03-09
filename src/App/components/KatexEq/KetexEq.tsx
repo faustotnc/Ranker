@@ -5,7 +5,7 @@ import "./KatexEq.scss";
 interface KatexEqProps {}
 
 const KatexEq: React.FC<KatexEqProps> = ({ children }) => {
-   let eq = katex.renderToString(children?.toString() || "", { throwOnError: false });
+   const eq = katex.renderToString(children?.toString() || "", { throwOnError: false });
    return <span className="eq" dangerouslySetInnerHTML={{ __html: eq }} />;
 };
 

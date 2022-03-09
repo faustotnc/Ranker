@@ -48,7 +48,7 @@ export class Network<T> {
     * @returns An array of nodes that are all connected to this child.
     */
    public getParentsOf(j: T | number) {
-      let nodeName = typeof j === "number" ? this.nodeTable.getNodes()[j] : j;
+      const nodeName = typeof j === "number" ? this.nodeTable.getNodes()[j] : j;
       return this.nodeTable.getParentsOf(nodeName);
    }
 
@@ -58,7 +58,7 @@ export class Network<T> {
     * @returns An array of nodes that are all children of this node.
     */
    public getChildrenOf(i: T | number) {
-      let nodeName = typeof i === "number" ? this.nodeTable.getNodes()[i] : i;
+      const nodeName = typeof i === "number" ? this.nodeTable.getNodes()[i] : i;
       return this.nodeTable.getChildrenOf(nodeName);
    }
 
@@ -80,12 +80,12 @@ export class Network<T> {
     */
    public toColumnStochastic() {
       switch (this.matrixFormula) {
-         case MatrixFormula.Google:
-            return this.nodeTable.computeGoogleColStochastic(0.8);
-         case MatrixFormula.Stochastic:
-            return this.nodeTable.trueColStochasticMatrix;
-         default:
-            return this.nodeTable.semiColStochasticMatrix;
+      case MatrixFormula.Google:
+         return this.nodeTable.computeGoogleColStochastic(0.8);
+      case MatrixFormula.Stochastic:
+         return this.nodeTable.trueColStochasticMatrix;
+      default:
+         return this.nodeTable.semiColStochasticMatrix;
       }
    }
 }

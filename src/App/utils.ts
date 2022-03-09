@@ -11,12 +11,12 @@ export const calculateTrueViewportHeight = () => {
 };
 
 export const getQueryStringParams = () => {
-   let raw = window.location.search;
-   let qs = /^[?#]/.test(raw) ? raw.slice(1) : raw;
+   const raw = window.location.search;
+   const qs = /^[?#]/.test(raw) ? raw.slice(1) : raw;
 
-   let params: { [key: string]: any } = {};
+   const params: { [key: string]: unknown } = {};
    qs.split("&").forEach((param) => {
-      let [key, value] = param.split("=");
+      const [key, value] = param.split("=");
       params[key] = value ? decodeURIComponent(value.replace(/\+/g, " ")) : "";
    });
 
@@ -25,9 +25,9 @@ export const getQueryStringParams = () => {
 
 // source: https://www.w3schools.com/js/js_cookies.asp
 export const getCookie = (cname: string) => {
-   let name = cname + "=";
-   let decodedCookie = decodeURIComponent(document.cookie);
-   let ca = decodedCookie.split(";");
+   const name = cname + "=";
+   const decodedCookie = decodeURIComponent(document.cookie);
+   const ca = decodedCookie.split(";");
 
    for (let i = 0; i < ca.length; i++) {
       let c = ca[i];
@@ -45,19 +45,19 @@ export const getCookie = (cname: string) => {
 };
 
 export const generateAdjListFromInput = (stringNodes: SingleInputNode[]) => {
-   let nodeList: AdjacencyList<string> = [];
+   const nodeList: AdjacencyList<string> = [];
+   const parents: StringNumberPairs = {};
 
-   let parents: StringNumberPairs = {};
    stringNodes.forEach((node) => {
       if (node.name.length === 0) return;
-      let children: string[] = [];
+      const children: string[] = [];
 
       (node.children || "").split(",").forEach((n) => {
-         let child = n.trim();
+         const child = n.trim();
          if (child.length > 0) children.push(child);
       });
 
-      let parentNames = Object.keys(parents);
+      const parentNames = Object.keys(parents);
 
       if (!parentNames.includes(node.name)) {
          parents[node.name] =

@@ -1,9 +1,15 @@
-import { useEffect, useMemo } from "react";
+import * as React from "react";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { getDesignTokens } from "./theme";
 import { Paper, Box, PaletteMode, Drawer, CssBaseline } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "./hooks";
-import { addNamedNode, MatrixFormula, setIterSpeed, setMaxIter, SingleInputNode } from "./components/EditorSideBar/Editor.store";
+import {
+   addNamedNode,
+   MatrixFormula,
+   setIterSpeed,
+   setMaxIter,
+   SingleInputNode,
+} from "./components/EditorSideBar/Editor.store";
 import { setGraphSettingsData } from "./components/GraphView/GraphView.store";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import "./App.scss";
@@ -16,7 +22,7 @@ import Header from "./components/Header/Header";
 import { calculateTrueViewportHeight, generateAdjListFromInput, getQueryStringParams } from "./utils";
 import { toggleOpenEditor } from "./AppSettings.store";
 
-interface AppProps { }
+interface AppProps {}
 
 const App: React.FC<AppProps> = () => {
    const dispatch = useAppDispatch();
@@ -25,7 +31,7 @@ const App: React.FC<AppProps> = () => {
    const editorIsOpen = useAppSelector((state) => state.appSettings.editorIsOpen);
 
    // Update the theme only if the mode changes
-   const themePalette = useMemo(() => {
+   const themePalette = React.useMemo(() => {
       let palette: PaletteMode;
 
       if (themeMode === "auto") {
@@ -41,34 +47,35 @@ const App: React.FC<AppProps> = () => {
    // Graph query params follow this format: "?graph=a:a,b;b:c,d"
    // This instructs ranker to form a graph as follows: [a->a, a->b, b->c, b->d]
    const composeGraphFromQuery = () => {
-      let queryGraphNodes: SingleInputNode[] = [];
+      const queryGraphNodes: SingleInputNode[] = [];
 
-      (getQueryStringParams().graph || "").split(";").forEach((paramNode: string) => {
-         let [from, to] = paramNode.split(":");
+      ((getQueryStringParams().graph as string) || "").split(";").forEach((paramNode: string) => {
+         const [from, to] = paramNode.split(":");
 
          // If the node's name is an empty string, then we don't add it to the graph
          if (from.length === 0 || to.length === 0) return;
 
-         let node = { name: from, children: to };
+         const node = { name: from, children: to };
          dispatch(addNamedNode(node));
          queryGraphNodes.push(node);
       });
 
-
-      let adjList = generateAdjListFromInput(queryGraphNodes);
+      const adjList = generateAdjListFromInput(queryGraphNodes);
       // TODO: MatrixFormula, iterSpeed, and maxIter also need to be extracted from query string
-      dispatch(setMaxIter(50))
-      dispatch(setIterSpeed(1))
-      if (queryGraphNodes.length > 0) dispatch(setGraphSettingsData({
-         graph: adjList,
-         matrixFormula: MatrixFormula.Simple,
-         iterSpeed: 1,
-         maxIter: 50
-      }));
-
+      dispatch(setMaxIter(50));
+      dispatch(setIterSpeed(1));
+      if (queryGraphNodes.length > 0)
+         dispatch(
+            setGraphSettingsData({
+               graph: adjList,
+               matrixFormula: MatrixFormula.Simple,
+               iterSpeed: 1,
+               maxIter: 50,
+            })
+         );
    };
 
-   useEffect(() => {
+   React.useEffect(() => {
       calculateTrueViewportHeight();
 
       // Initial calculation right after the viewport is resized

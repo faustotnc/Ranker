@@ -65,7 +65,11 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
             </Tooltip>
 
             <Tooltip title="Restart Power Iteration">
-               <IconButton aria-label="Restart Power Iteration" onClick={() => props.onRestartPowerIteration()} color="primary">
+               <IconButton
+                  aria-label="Restart Power Iteration"
+                  onClick={() => props.onRestartPowerIteration()}
+                  color="primary"
+               >
                   <RestartIcon />
                </IconButton>
             </Tooltip>
@@ -107,7 +111,12 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
 
          <Box className="iteration-progress-bar" sx={{ display: "flex", alignItems: "center" }}>
             <span>{props.currentStep}</span>
-            <LinearProgress className="bar" variant="determinate" value={(props.currentStep / props.maxIter) * 100} sx={{ width: 300 }} />
+            <LinearProgress
+               className="bar"
+               variant="determinate"
+               value={(props.currentStep / props.maxIter) * 100}
+               sx={{ width: 300 }}
+            />
             <span className="slash">/</span>
             <span>{props.maxIter}</span>
          </Box>
@@ -140,7 +149,7 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
                   aria-label="start/pause"
                   endIcon={viewMatricesIsOpen ? <WebhookIcon /> : <TableViewIcon />}
                   onClick={() => {
-                     setViewMatricesIsOpen(!viewMatricesIsOpen)
+                     setViewMatricesIsOpen(!viewMatricesIsOpen);
                      props.onToggleViewMatrices();
                   }}
                >
@@ -174,10 +183,12 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
                      </ListItemIcon>
                      <ListItemText>Reset Graph Layout</ListItemText>
                   </MenuItem>
-                  <MenuItem onClick={() => {
-                     handleClose();
-                     props.onFitGraph()
-                  }}>
+                  <MenuItem
+                     onClick={() => {
+                        handleClose();
+                        props.onFitGraph();
+                     }}
+                  >
                      <ListItemIcon>
                         <FitScreenIcon fontSize="small" />
                      </ListItemIcon>
@@ -195,11 +206,13 @@ const GraphControls: React.FC<GraphControlsProps> = (props: GraphControlsProps) 
                      </ListItemIcon>
                      <ListItemText>Zoom Out</ListItemText>
                   </MenuItem>
-                  <MenuItem onClick={() => {
-                     handleClose();
-                     setViewMatricesIsOpen(!viewMatricesIsOpen);
-                     props.onToggleViewMatrices();
-                  }}>
+                  <MenuItem
+                     onClick={() => {
+                        handleClose();
+                        setViewMatricesIsOpen(!viewMatricesIsOpen);
+                        props.onToggleViewMatrices();
+                     }}
+                  >
                      <ListItemIcon>
                         {viewMatricesIsOpen ? <WebhookIcon fontSize="small" /> : <TableViewIcon fontSize="small" />}
                      </ListItemIcon>

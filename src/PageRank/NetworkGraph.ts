@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import cytoscape from "cytoscape";
 import ColorMap from "colormap";
 
@@ -18,7 +19,7 @@ export const getColorCode = (p: number, min: number, max: number) => {
    let interpolated_prob = 40;
    if (max - min > 0) {
       const [y1, y2] = [20, 90];
-      let m = (y2 - y1) / (max - min);
+      const m = (y2 - y1) / (max - min);
       interpolated_prob = m * p + y1 - m * min;
    }
 
@@ -29,12 +30,12 @@ export const getColorCode = (p: number, min: number, max: number) => {
    };
 };
 
-export const getSize = (p: number, min: number, max: number) => {
+export const getSize = (p: number, min: number, max: number): [number, number] => {
    let interpolated_size = 40;
-   const [y1, y2] = [32, 48];
+   const [y1, y2] = [32, 72];
 
    if (max - min > 0) {
-      let m = (y2 - y1) / (max - min);
+      const m = (y2 - y1) / (max - min);
       interpolated_size = m * p + y1 - m * min;
    }
 
@@ -55,12 +56,12 @@ export class NetworkGraph {
          this.cytoGraph = this.createGraph(container);
 
          this.cytoGraph.on("mouseover", "node", (event) => {
-            let container = event.cy.container();
+            const container = event.cy.container();
             if (container) container.style.cursor = "pointer";
          });
 
          this.cytoGraph.on("mouseout", "node", (event) => {
-            let container = event.cy.container();
+            const container = event.cy.container();
             if (container) container.style.cursor = "default";
          });
 
@@ -102,26 +103,26 @@ export class NetworkGraph {
    }
 
    public addNetwork(edges: [string, string][], prob: { [key: string]: number }) {
-      let min = Math.min(...Object.values(prob)) * 100;
-      let max = Math.max(...Object.values(prob)) * 100;
+      const min = Math.min(...Object.values(prob)) * 100;
+      const max = Math.max(...Object.values(prob)) * 100;
 
-      let discovered: string[] = [];
+      const discovered: string[] = [];
 
       const discoverNode = (node: string) => {
          discovered.push(node);
 
-         let n = this.cytoGraph.add({
+         const n = this.cytoGraph.add({
             data: { id: node },
          });
 
-         let color = getColorCode(prob[n.id()] * 100, min, max);
+         const color = getColorCode(prob[n.id()] * 100, min, max);
          n.style("background-color", color.bg);
          n.style("color", color.fg);
       };
 
       edges.forEach((edge) => {
-         let from = edge[0];
-         let to = edge[1];
+         const from = edge[0];
+         const to = edge[1];
 
          if (!discovered.includes(from)) discoverNode(from);
          if (!discovered.includes(to)) discoverNode(to);
@@ -135,15 +136,15 @@ export class NetworkGraph {
    }
 
    public updateProb(prob: { [key: string]: number }) {
-      let min = Math.min(...Object.values(prob)) * 100;
-      let max = Math.max(...Object.values(prob)) * 100;
+      const min = Math.min(...Object.values(prob)) * 100;
+      const max = Math.max(...Object.values(prob)) * 100;
 
       this.cytoGraph.nodes().forEach((node) => {
-         let color = getColorCode(prob[node.id()] * 100, min, max);
+         const color = getColorCode(prob[node.id()] * 100, min, max);
          node.style("background-color", color.bg);
          node.style("color", color.fg);
 
-         let size = getSize(prob[node.id()] * 100, min, max);
+         const size = getSize(prob[node.id()] * 100, min, max);
          node.style("width", size);
          node.style("height", size);
       });
@@ -179,7 +180,7 @@ export class NetworkGraph {
             eles: this.cytoGraph.elements(),
          },
          duration: 750,
-         easing: "ease-out-expo",
+         easing: "ease-in-out-cubic",
       });
    }
 
@@ -190,7 +191,7 @@ export class NetworkGraph {
             eles: this.cytoGraph.$id(id),
          },
          duration: 750,
-         easing: "ease-out-expo",
+         easing: "ease-in-out-cubic",
       });
    }
 
@@ -215,20 +216,20 @@ export class NetworkGraph {
    }
 
    public onNodeClick(callback: (evt: cytoscape.EventObject) => void) {
-      this.cytoGraph.on('tap', 'node', callback)
+      this.cytoGraph.on("tap", "node", callback);
    }
 
    public onEdgeClick(callback: (evt: cytoscape.EventObject) => void) {
-      this.cytoGraph.on('tap', 'edge', callback)
+      this.cytoGraph.on("tap", "edge", callback);
    }
 
    public onBgClick(callback: (evt: cytoscape.EventObject) => void) {
-      this.cytoGraph.on('tap', (evt) => {
+      this.cytoGraph.on("tap", (evt) => {
          if (evt.target === this.cytoGraph) callback(evt);
-      })
+      });
    }
 
    public removeAllClickListeners() {
-      this.cytoGraph.off('tap')
+      this.cytoGraph.off("tap");
    }
 }

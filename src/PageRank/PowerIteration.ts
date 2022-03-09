@@ -3,13 +3,13 @@ import { StringNumberPairs } from "../App/utils";
 
 export class PowerIterator {
    public state: "running" | "paused" = "paused";
-   private powerIterTimer: number | null = null;
+   private powerIterTimer = -1;
    private matrix: number[][] = [];
    private r: number[] = [];
-   private currentStep: number = 0;
+   private currentStep = 0;
 
    constructor(private network: Network<string>, private maxIter = 100, private iterSpeed = 1) {
-      this.resetWith(network, maxIter, iterSpeed)
+      this.resetWith(network, maxIter, iterSpeed);
    }
 
    /**
@@ -91,7 +91,7 @@ export class PowerIterator {
 
       this.powerIterTimer = window.setInterval(() => {
          if (this.currentStep >= this.maxIter - 1) {
-            window.clearInterval(this.powerIterTimer!)
+            window.clearInterval(this.powerIterTimer);
          }
 
          callback(this.next());
@@ -103,7 +103,7 @@ export class PowerIterator {
     * @returns The probability vector at this step.
     */
    public next() {
-      let vec = [];
+      const vec = [];
 
       for (const row of this.matrix) {
          vec.push(this.dot(row, this.r));

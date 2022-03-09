@@ -8,7 +8,7 @@ interface appSettingsSliceState {
    editorIsOpen: boolean;
 }
 
-let savedTheme = getCookie("theme") as ThemeType;
+const savedTheme = getCookie("theme") as ThemeType;
 
 // Define the initial state using that type
 const initialState: appSettingsSliceState = {
@@ -22,14 +22,14 @@ export const appSettingsSlide = createSlice({
    reducers: {
       rotateTheme: (state) => {
          switch (state.currentTheme) {
-            case "light":
-               state.currentTheme = "dark";
-               break;
-            case "dark":
-               state.currentTheme = "auto";
-               break;
-            case "auto":
-               state.currentTheme = "light";
+         case "light":{
+            state.currentTheme = "dark";
+            break;}
+         case "dark":
+            state.currentTheme = "auto";
+            break;
+         case "auto":
+            state.currentTheme = "light";
          }
 
          document.cookie = `theme=${state.currentTheme};max-age=86400`;

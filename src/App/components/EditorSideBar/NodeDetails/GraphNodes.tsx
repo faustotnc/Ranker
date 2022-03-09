@@ -9,7 +9,7 @@ import { useAppDispatch, useAppSelector } from "../../../hooks";
 
 interface NodeDetailsProps {}
 
-const NodeDetails: React.FC<NodeDetailsProps> = (props: NodeDetailsProps) => {
+const NodeDetails: React.FC<NodeDetailsProps> = () => {
    const dispatch = useAppDispatch();
    const nodeList = useAppSelector((state) => state.editor.nodes);
 
@@ -33,7 +33,7 @@ const NodeDetails: React.FC<NodeDetailsProps> = (props: NodeDetailsProps) => {
       );
    };
 
-   let nodeInputs = nodeList.map((node, idx) => (
+   const nodeInputs = nodeList.map((node, idx) => (
       <Box className="node" key={idx} sx={{ display: "grid", gridTemplateColumns: "34px 1.5fr 4fr", gap: 1 }}>
          <IconButton
             aria-label="delete"

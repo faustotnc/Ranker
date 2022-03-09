@@ -12,7 +12,7 @@ const SelectMatrixFormula: React.FC<SelectMatrixFormulaProps> = () => {
    const rankAlgo = useAppSelector((state) => state.editor.matrixFormula);
 
    const handleChange = (e: SelectChangeEvent) => {
-      let value = Number.parseInt(e.target.value) as MatrixFormula;
+      const value = Number.parseInt(e.target.value) as MatrixFormula;
       dispatch(setMatrixFormula(value));
    };
 
@@ -42,7 +42,7 @@ const SelectMatrixFormula: React.FC<SelectMatrixFormulaProps> = () => {
             >
                <MenuItem value={MatrixFormula.Simple}>Simple Column-Stochastic</MenuItem>
                <MenuItem value={MatrixFormula.Stochastic}>True Column-Stochastic</MenuItem>
-               <MenuItem value={MatrixFormula.Google}>Google's PageRank</MenuItem>
+               <MenuItem value={MatrixFormula.Google}>Google&apos;s PageRank</MenuItem>
             </Select>
          </FormControl>
 
