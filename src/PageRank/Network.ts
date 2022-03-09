@@ -80,12 +80,12 @@ export class Network<T> {
     */
    public toColumnStochastic() {
       switch (this.matrixFormula) {
-      case MatrixFormula.Google:
-         return this.nodeTable.computeGoogleColStochastic(0.8);
-      case MatrixFormula.Stochastic:
-         return this.nodeTable.trueColStochasticMatrix;
-      default:
-         return this.nodeTable.semiColStochasticMatrix;
+         case MatrixFormula.Google:
+            return this.nodeTable.computeGoogleColStochastic(0.8);
+         case MatrixFormula.Stochastic:
+            return this.nodeTable.trueColStochasticMatrix;
+         default:
+            return this.nodeTable.semiColStochasticMatrix;
       }
    }
 }

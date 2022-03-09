@@ -5,8 +5,10 @@ import { Paper, Box, PaletteMode, Drawer, CssBaseline } from "@mui/material";
 import { useAppDispatch, useAppSelector } from "./hooks";
 import {
    addNamedNode,
+   GraphSettingsData,
    MatrixFormula,
    setIterSpeed,
+   setMatrixFormula,
    setMaxIter,
    SingleInputNode,
 } from "./components/EditorSideBar/Editor.store";
@@ -47,9 +49,11 @@ const App: React.FC<AppProps> = () => {
    // Graph query params follow this format: "?graph=a:a,b;b:c,d"
    // This instructs ranker to form a graph as follows: [a->a, a->b, b->c, b->d]
    const composeGraphFromQuery = () => {
-      const queryGraphNodes: SingleInputNode[] = [];
+      const queryParams = getQueryStringParams();
 
-      ((getQueryStringParams().graph as string) || "").split(";").forEach((paramNode: string) => {
+      const queryGraphParam = (queryParams.graph as string) || "";
+      const queryGraphNodes: SingleInputNode[] = [];
+      queryGraphParam.split(";").forEach((paramNode: string) => {
          const [from, to] = paramNode.split(":");
 
          // If the node's name is an empty string, then we don't add it to the graph
@@ -60,19 +64,22 @@ const App: React.FC<AppProps> = () => {
          queryGraphNodes.push(node);
       });
 
-      const adjList = generateAdjListFromInput(queryGraphNodes);
-      // TODO: MatrixFormula, iterSpeed, and maxIter also need to be extracted from query string
-      dispatch(setMaxIter(50));
-      dispatch(setIterSpeed(1));
-      if (queryGraphNodes.length > 0)
-         dispatch(
-            setGraphSettingsData({
-               graph: adjList,
-               matrixFormula: MatrixFormula.Simple,
-               iterSpeed: 1,
-               maxIter: 50,
-            })
-         );
+      const queryMFParam = (queryParams.mf as string) || "";
+      const queryMIParam = Number((queryParams.mi as string) || "");
+      const queryISParam = Number((queryParams.is as string) || "");
+
+      const graphData: GraphSettingsData = {
+         graph: generateAdjListFromInput(queryGraphNodes),
+         matrixFormula: /^(0|1|2){1}$/g.test(queryMFParam) ? Number(queryMFParam) : MatrixFormula.Simple,
+         maxIter: !!queryMIParam && queryMIParam >= 10 && queryMIParam <= 100 ? queryMIParam : 50,
+         iterSpeed: !!queryISParam && queryISParam >= 0.1 && queryISParam <= 3 ? queryISParam : 1,
+      };
+
+      dispatch(setMatrixFormula(graphData.matrixFormula));
+      dispatch(setMaxIter(graphData.maxIter));
+      dispatch(setIterSpeed(graphData.iterSpeed));
+
+      dispatch(setGraphSettingsData(graphData));
    };
 
    React.useEffect(() => {

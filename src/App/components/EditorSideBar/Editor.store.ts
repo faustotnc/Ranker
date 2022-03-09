@@ -16,7 +16,7 @@ export enum MatrixFormula {
 // The data structure passed to the GraphView every time
 // the user clicks the "Update Graph" button.
 export interface GraphSettingsData {
-   graph: AdjacencyList<string>,
+   graph: AdjacencyList<string>;
    matrixFormula: MatrixFormula;
    maxIter: number;
    iterSpeed: number;

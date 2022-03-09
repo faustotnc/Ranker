@@ -1,5 +1,5 @@
-import React from "react";
-import { AppBar, IconButton, Paper, Toolbar, Typography, SvgIcon, Button, Box } from "@mui/material";
+import * as React from "react";
+import { AppBar, IconButton, Paper, Toolbar, Typography, SvgIcon, Button, Box, Menu, TextField } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import BrightIcon from "@mui/icons-material/Brightness7";
 import DarkIcon from "@mui/icons-material/Brightness4";
@@ -10,12 +10,30 @@ import Logo from "../../../Full-Logo05x.png";
 import "./Header.scss";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { rotateTheme, toggleOpenEditor } from "../../AppSettings.store";
+import { GraphSettingsData } from "../EditorSideBar/Editor.store";
+import { selectGraphSettingsData } from "../GraphView/GraphView.store";
 
 interface HeaderProps {}
 
+const composeSharableURL = (data: GraphSettingsData) => {
+   const protocol = window.location.protocol + "//";
+   const hostname = window.location.hostname;
+   const port = window.location.port.length > 0 ? ":" + window.location.port : "";
+   const baseURL = `${protocol}${hostname}${port}/`;
+
+   const graph = data.graph.reduce((prev, node) => {
+      return `${prev}${node.from}:${node.to.join(",")};`;
+   }, "");
+
+   return `${baseURL}?graph=${graph}&mf=${data.matrixFormula}&mi=${data.maxIter}&is=${data.iterSpeed}`;
+};
+
 const Header: React.FC<HeaderProps> = () => {
    const dispatch = useAppDispatch();
+   const graphData = useAppSelector(selectGraphSettingsData);
    const currentTheme = useAppSelector((state) => state.appSettings.currentTheme);
+   const [sharePopupIsOpen, setSharePopupIsOpen] = React.useState<boolean>(false);
+   const shareLinkAnchorEl = React.useRef(null);
 
    const themeIcon =
       currentTheme === "light" ? <BrightIcon /> : currentTheme === "auto" ? <BrightnessAutoIcon /> : <DarkIcon />;
@@ -56,7 +74,12 @@ const Header: React.FC<HeaderProps> = () => {
                   className="right-buttons"
                   sx={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}
                >
-                  <IconButton color="primary" className="no-mobile">
+                  <IconButton
+                     color="primary"
+                     className="no-mobile"
+                     onClick={() => setSharePopupIsOpen(true)}
+                     ref={shareLinkAnchorEl}
+                  >
                      <ShareIcon />
                   </IconButton>
 
@@ -88,6 +111,47 @@ const Header: React.FC<HeaderProps> = () => {
                </Box>
             </Toolbar>
          </Paper>
+
+         <Menu
+            anchorEl={shareLinkAnchorEl.current}
+            open={sharePopupIsOpen}
+            onClose={() => setSharePopupIsOpen(false)}
+            className="share-box"
+            PaperProps={{
+               elevation: 5,
+               sx: {
+                  width: "90%",
+                  maxWidth: 400,
+                  paddingX: "16px",
+                  paddingY: "8px",
+                  "& input": {
+                     height: "unset",
+                  },
+               },
+            }}
+            transformOrigin={{ horizontal: "right", vertical: "top" }}
+            anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
+         >
+            <Typography variant="h6" component="p">
+               Share This Graph
+            </Typography>
+
+            <TextField
+               id="share-link-input-el"
+               label="Graph URL"
+               variant="filled"
+               value={composeSharableURL(graphData)}
+               className="select-link-input"
+               fullWidth
+               onFocus={(e) => e.target.select()}
+               margin="normal"
+            />
+
+            <Typography variant="caption" component="p" sx={{ lineHeight: 1.3, mt: "8px" }}>
+               Copy the above link to share this graph with friends and colleagues. The nodes, matrix formulation, max
+               iterations, and iteration speed will be shared with this link.
+            </Typography>
+         </Menu>
       </AppBar>
    );
 };

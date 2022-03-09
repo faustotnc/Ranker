@@ -17,11 +17,11 @@ const initialState: GraphViewSliceState = {
       graph: [],
       matrixFormula: MatrixFormula.Simple,
       maxIter: 0,
-      iterSpeed: 0
+      iterSpeed: 0,
    },
    probVector: {},
    powerIterIsRunning: false,
-   selectedNode: null
+   selectedNode: null,
 };
 
 export const graphViewSlice = createSlice({
@@ -40,17 +40,12 @@ export const graphViewSlice = createSlice({
       },
       setSelectedNode: (state, action: PayloadAction<string | null>) => {
          state.selectedNode = action.payload;
-      }
+      },
    },
 });
 
 // Action creators are generated for each case reducer function
-export const {
-   setGraphSettingsData,
-   setProbVector,
-   setPowerIterIsRunning,
-   setSelectedNode
-} = graphViewSlice.actions;
+export const { setGraphSettingsData, setProbVector, setPowerIterIsRunning, setSelectedNode } = graphViewSlice.actions;
 
 export const selectGraphSettingsData = (state: RootState) => state.graphView.graphSettingsData;
 export const selectProbVector = (state: RootState) => state.graphView.probVector;
