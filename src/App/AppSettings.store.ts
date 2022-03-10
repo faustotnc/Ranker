@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { RootState } from "../store";
 import { ThemeType } from "./theme";
 import { getCookie } from "./utils";
 
@@ -42,6 +43,7 @@ export const appSettingsSlide = createSlice({
 
 // Action creators are generated for each case reducer function
 export const { rotateTheme, toggleOpenEditor } = appSettingsSlide.actions;
+export const selectCurrentTheme = (state: RootState) => state.appSettings.currentTheme;
 
 // Other code such as selectors can use the imported `RootState` type
 // export const selectNodes = (state: RootState) => state.counter.nodes;

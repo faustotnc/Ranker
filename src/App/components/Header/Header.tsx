@@ -7,7 +7,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import { AppBar, Box, Button, IconButton, Menu, Paper, SvgIcon, TextField, Toolbar, Typography } from "@mui/material";
 import * as React from "react";
 import Logo from "../../../Full-Logo05x.png";
-import { rotateTheme, toggleOpenEditor } from "../../AppSettings.store";
+import { rotateTheme, selectCurrentTheme, toggleOpenEditor } from "../../AppSettings.store";
 import { useAppDispatch, useAppSelector } from "../../hooks";
 import { GraphSettingsData } from "../EditorSideBar/Editor.store";
 import { selectGraphSettingsData } from "../GraphView/GraphView.store";
@@ -31,7 +31,7 @@ const composeSharableURL = (data: GraphSettingsData) => {
 const Header: React.FC<HeaderProps> = () => {
    const dispatch = useAppDispatch();
    const graphData = useAppSelector(selectGraphSettingsData);
-   const currentTheme = useAppSelector((state) => state.appSettings.currentTheme);
+   const currentTheme = useAppSelector(selectCurrentTheme);
    const [sharePopupIsOpen, setSharePopupIsOpen] = React.useState<boolean>(false);
    const shareLinkAnchorEl = React.useRef(null);
 

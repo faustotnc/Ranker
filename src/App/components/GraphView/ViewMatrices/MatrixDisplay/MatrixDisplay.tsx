@@ -1,4 +1,6 @@
+import ArrowForward from "@mui/icons-material/ArrowForward";
 import {
+   Box,
    Divider,
    Paper,
    Table,
@@ -18,20 +20,33 @@ interface MatrixDisplayProps {
    matrix: number[][];
 }
 
-const singleTableCell = (id: number, maxVal: number, val: number) => {
+const singleTableCell = (id: number, from: string, to: string, maxVal: number, val: number) => {
    const colors = getColorCodes(Number(val), 0, maxVal);
+   const rounded_4 = Math.round(val * 10000) / 10000;
 
    return (
       <TableCell
-         key={id}
          align="center"
+         key={id}
          sx={{
             color: colors.fg,
             background: colors.bg,
             minWidth: "64px",
+            padding: 0,
+            "&:hover & .edge-name": {
+               height: "auto",
+               opacity: 1,
+            },
          }}
       >
-         {Math.round(val * 10000) / 10000}
+         <Box className="value-container" sx={{ display: "flex", flexDirection: "column", height: "100%" }}>
+            <Box className="edge-name" sx={{ fontSize: 12, height: 0, opacity: 0 }}>
+               {from}
+               <ArrowForward sx={{ fontSize: 12, position: "relative", top: "2px" }} />
+               {to}
+            </Box>
+            {rounded_4}
+         </Box>
       </TableCell>
    );
 };
@@ -85,7 +100,7 @@ const MatrixDisplay: React.FunctionComponent<MatrixDisplayProps> = ({ title, nod
                         <TableCell key={0} align="center">
                            {nodes[rid]}
                         </TableCell>
-                        {row.map((val, cid) => singleTableCell(cid + 1, maxVal, val))}
+                        {row.map((val, cid) => singleTableCell(cid + 1, nodes[rid], nodes[cid], maxVal, val))}
                      </TableRow>
                   ))}
                </TableBody>
