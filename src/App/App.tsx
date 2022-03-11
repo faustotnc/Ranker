@@ -1,4 +1,4 @@
-import { Box, CssBaseline, Drawer, PaletteMode, Paper } from "@mui/material";
+import { Box, CssBaseline, Divider, Drawer, PaletteMode, Paper, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as React from "react";
@@ -8,6 +8,7 @@ import {
    addNamedNode,
    GraphSettingsData,
    MatrixFormula,
+   setChangesHaveExecuted,
    setIterSpeed,
    setMatrixFormula,
    setMaxIter,
@@ -15,7 +16,8 @@ import {
 } from "./components/EditorSideBar/Editor.store";
 import Editor from "./components/EditorSideBar/EditorSideBar";
 import Graph from "./components/GraphView/GraphView";
-import { setGraphSettingsData } from "./components/GraphView/GraphView.store";
+import { selectGraphSettingsData, setGraphSettingsData } from "./components/GraphView/GraphView.store";
+import InfoContent from "./components/Header/About/InfoContent";
 import Header from "./components/Header/Header";
 import RVector from "./components/RVector/RVector";
 import { useAppDispatch, useAppSelector } from "./hooks";
@@ -29,6 +31,7 @@ const App: React.FC<AppProps> = () => {
    const prefersDarkMode = useMediaQuery("(prefers-color-scheme: dark)");
    const themeMode = useAppSelector((state) => state.appSettings.currentTheme);
    const editorIsOpen = useAppSelector((state) => state.appSettings.editorIsOpen);
+   const graphData = useAppSelector(selectGraphSettingsData);
 
    // Update the theme only if the mode changes
    const themePalette = React.useMemo(() => {
@@ -58,7 +61,7 @@ const App: React.FC<AppProps> = () => {
          const [from, to] = paramNode.split(":");
 
          // If the node's name is an empty string, then we don't add it to the graph
-         if (from.length === 0 || to.length === 0) return;
+         if (from.length === 0 || !to || to.length === 0) return;
 
          const node = { name: from, children: to };
          dispatch(addNamedNode(node));
@@ -80,6 +83,7 @@ const App: React.FC<AppProps> = () => {
       dispatch(setMaxIter(graphData.maxIter));
       dispatch(setIterSpeed(graphData.iterSpeed));
       dispatch(setGraphSettingsData(graphData));
+      dispatch(setChangesHaveExecuted());
    }, [dispatch]);
 
    return (
@@ -87,7 +91,6 @@ const App: React.FC<AppProps> = () => {
          <CssBaseline></CssBaseline>
 
          <Header></Header>
-
          <Drawer
             className="editor-drawer"
             // container={container}
@@ -100,13 +103,11 @@ const App: React.FC<AppProps> = () => {
          >
             <Editor></Editor>
          </Drawer>
-
          <Box className="App" sx={{ display: "flex" }}>
             {/* ---------- THE SIDE BAR ---------- */}
             <Paper elevation={0} className="sidebar">
                <Editor></Editor>
             </Paper>
-
             {/* ---------- THE GRAPH VIEW ---------- */}
             <Paper
                variant="outlined"
@@ -114,18 +115,37 @@ const App: React.FC<AppProps> = () => {
                sx={{ borderRadius: 0, borderTop: 0, borderBottom: 0, borderRight: 0, flexGrow: 1 }}
                className="graph-viz"
             >
-               <Graph></Graph>
+               {graphData.graph.length > 0 ? (
+                  <Graph></Graph>
+               ) : (
+                  <Box sx={{ display: "flex", justifyContent: "center", overflowY: "auto", height: "100%" }}>
+                     <Box sx={{ width: "90%", height: "fit-content", maxWidth: "700px", py: "64px" }}>
+                        <Typography variant="h4">Create a graph from the &quot;Editor&quot; menu.</Typography>
+                        <Typography variant="body1">
+                           On mobile devices, the editor menu can be accessed by tapping the menu icon at the top-left
+                           corner of the screen.
+                        </Typography>
+                        <br />
+                        <Divider></Divider>
+                        <br />
+                        <InfoContent></InfoContent>
+                     </Box>
+                  </Box>
+               )}
             </Paper>
-
             {/* ---------- THE R VECTOR ---------- */}
-            <Paper
-               variant="outlined"
-               elevation={0}
-               sx={{ borderRadius: 0, borderTop: 0, borderBottom: 0, borderRight: 0 }}
-               className="r-vector-wrapper"
-            >
-               <RVector></RVector>
-            </Paper>
+            {graphData.graph.length > 0 ? (
+               <Paper
+                  variant="outlined"
+                  elevation={0}
+                  sx={{ borderRadius: 0, borderTop: 0, borderBottom: 0, borderRight: 0 }}
+                  className="r-vector-wrapper"
+               >
+                  <RVector></RVector>
+               </Paper>
+            ) : (
+               ""
+            )}
          </Box>
       </ThemeProvider>
    );

@@ -1,0 +1,20 @@
+div.about-container {
+   width: 100%;
+   max-width: 500px;
+   height: 100%;
+   border-radius: 0;
+
+   div.content {
+      padding: 16px;
+      overflow-y: auto;
+      height: 100%;
+
+      div.logo {
+         text-align: center;
+
+         img {
+            width: 50%;
+         }
+      }
+   }
+}

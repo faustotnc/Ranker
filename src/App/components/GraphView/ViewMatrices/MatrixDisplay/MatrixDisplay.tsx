@@ -33,7 +33,7 @@ const singleTableCell = (id: number, from: string, to: string, maxVal: number, v
             background: colors.bg,
             minWidth: "64px",
             padding: 0,
-            "&:hover & .edge-name": {
+            "&:hover .edge-name": {
                height: "auto",
                opacity: 1,
             },

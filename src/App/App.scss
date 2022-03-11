@@ -43,3 +43,13 @@ div.App {
       }
    }
 }
+
+div.equation {
+   text-align: center;
+   margin-top: 24px;
+   font-size: 24px;
+
+   &.small {
+      font-size: 18px;
+   }
+}
