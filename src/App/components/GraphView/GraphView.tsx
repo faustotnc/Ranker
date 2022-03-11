@@ -63,6 +63,7 @@ const GraphView: React.FC<GraphViewProps> = () => {
    /** Mount the CytoGraph canvas once the element is ready. */
    React.useEffect(() => {
       if (cyContainer.current) {
+         cytoGraph.unmount();
          cytoGraph.mountOn(cyContainer.current);
       }
    }, [cyContainer]);

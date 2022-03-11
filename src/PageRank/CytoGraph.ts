@@ -95,6 +95,14 @@ export class CytoGraph {
    }
 
    /**
+    * Unmounts the Cytoscape canvas from its current container.
+    */
+   public unmount() {
+      this.cytoGraph.unmount();
+      this.hasMounted = false;
+   }
+
+   /**
     * Create a new Cytoscape object.
     * @param container The HTML element where to mount the Cytoscape canvas.
     * @returns A new Cytoscape object.
