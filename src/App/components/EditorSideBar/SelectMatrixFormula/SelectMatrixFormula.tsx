@@ -19,12 +19,12 @@ const SelectMatrixFormula: React.FC<SelectMatrixFormulaProps> = () => {
    let flowEquation = "";
 
    if (rankAlgo === MatrixFormula.Simple) {
-      flowEquation = "\\vec{r}_j = \\displaystyle\\sum_{i \\rightarrow j}{\\big ( \\frac{\\vec{r}_i}{d_i} \\big ) }";
+      flowEquation = "r_j = \\displaystyle\\sum_{i \\rightarrow j}{\\big ( \\frac{r_i}{d_i} \\big ) }";
    } else if (rankAlgo === MatrixFormula.Stochastic) {
-      flowEquation = "\\vec{r}_j = \\displaystyle\\sum_{i \\rightarrow j}{\\big ( \\frac{\\vec{r}_i}{d_i} \\big ) }";
+      flowEquation = "r_j = \\displaystyle\\sum_{i \\rightarrow j}{\\big ( \\frac{r_i}{d_i} \\big ) }";
    } else {
       flowEquation =
-         "\\vec{r}_j = \\displaystyle\\sum_{i \\rightarrow j}{\\big ( \\frac{\\beta \\vec{r}_i}{d_i} + \\frac{1 - \\beta}{N} \\big ) }";
+         "r_j = \\displaystyle\\sum_{i \\rightarrow j}{\\big ( \\frac{\\beta r_i}{d_i} + \\frac{1 - \\beta}{N} \\big ) }";
    }
 
    return (

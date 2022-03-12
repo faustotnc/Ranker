@@ -30,22 +30,22 @@ const AdjustPowerIter: React.FC<AdjustPowerIterProps> = () => {
       <div>
          <Typography variant="caption" component="p" className="section-description caption-text">
             The power iteration algorithm is an approximation method for computing the eigenvectors of a matrix. It uses
-            the following recursive formula to find the principal eigenvector <KatexEq>{"\\vec{r}"}</KatexEq> of a
+            the following recursive formula to find the principal eigenvector <KatexEq>{"r"}</KatexEq> of a
             matrix <KatexEq>M</KatexEq>:
          </Typography>
 
          <div className="equation">
-            <KatexEq>{"\\vec{r}_{n+1} = \\frac{M \\vec{r}_{n}}{||M \\vec{r}_{n} ||}"}</KatexEq>
+            <KatexEq>{"r^{(n+1)} = \\frac{M r^{(n)}}{||M r^{(n)} ||}"}</KatexEq>
          </div>
 
          <Typography variant="caption" component="p" className="caption-text">
             However, in the case of PageRank, the matrix <KatexEq>M</KatexEq> is column-stochastic and{" "}
-            <KatexEq>{"\\vec{r}"}</KatexEq> is a probability vector, therefore,{" "}
-            <KatexEq>{"||M \\vec{r}_{n} || = 1"}</KatexEq>, and we can reduce the power iteration formula to:
+            <KatexEq>{"r"}</KatexEq> is a probability vector, therefore,{" "}
+            <KatexEq>{"||M r^{(n)} || = 1"}</KatexEq>, and we can reduce the power iteration formula to:
          </Typography>
 
          <div className="equation">
-            <KatexEq>{"\\vec{r}_{n+1} = M \\vec{r}_{n}"}</KatexEq>
+            <KatexEq>{"r^{(n+1)} = M r^{(n)}"}</KatexEq>
          </div>
 
          <Typography variant="caption" component="p" className="section-description caption-text">

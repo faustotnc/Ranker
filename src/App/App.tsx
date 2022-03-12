@@ -1,4 +1,4 @@
-import { Box, CssBaseline, Divider, Drawer, PaletteMode, Paper, Typography } from "@mui/material";
+import { Box, CssBaseline, Divider, Drawer, Paper, Typography } from "@mui/material";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import * as React from "react";
@@ -35,15 +35,15 @@ const App: React.FC<AppProps> = () => {
 
    // Update the theme only if the mode changes
    const themePalette = React.useMemo(() => {
-      let palette: PaletteMode;
+      const colors = getDesignTokens(themeMode === "auto" ? (prefersDarkMode ? "dark" : "light") : themeMode);
 
-      if (themeMode === "auto") {
-         palette = prefersDarkMode ? "dark" : "light";
-      } else {
-         palette = themeMode;
-      }
+      // Change the app's "color-theme" meta tag
+      document
+         .querySelector("meta[name='theme-color']")
+         ?.setAttribute("content", colors.palette?.background?.paper || "#fffdf7");
 
-      return createTheme(getDesignTokens(palette));
+      // Return the created theme
+      return createTheme(colors);
    }, [themeMode, prefersDarkMode]);
 
    React.useEffect(() => {
@@ -105,22 +105,23 @@ const App: React.FC<AppProps> = () => {
          </Drawer>
          <Box className="App" sx={{ display: "flex" }}>
             {/* ---------- THE SIDE BAR ---------- */}
-            <Paper elevation={0} className="sidebar">
+            <Paper
+               elevation={0}
+               variant="outlined"
+               className="sidebar"
+               sx={{ borderRadius: 0, borderTop: 0, borderBottom: 0, borderLeft: 0 }}
+            >
                <Editor></Editor>
             </Paper>
             {/* ---------- THE GRAPH VIEW ---------- */}
-            <Paper
-               variant="outlined"
-               elevation={0}
-               sx={{ borderRadius: 0, borderTop: 0, borderBottom: 0, borderRight: 0, flexGrow: 1 }}
-               className="graph-viz"
-            >
+            <Paper elevation={0} sx={{ flexGrow: 1 }} className="graph-viz">
                {graphData.graph.length > 0 ? (
                   <Graph></Graph>
                ) : (
                   <Box sx={{ display: "flex", justifyContent: "center", overflowY: "auto", height: "100%" }}>
-                     <Box sx={{ width: "90%", height: "fit-content", maxWidth: "700px", py: "64px" }}>
+                     <Box sx={{ width: "90%", height: "fit-content", maxWidth: "700px", pt: "64px", pb: "32px" }}>
                         <Typography variant="h4">Create a graph from the &quot;Editor&quot; menu.</Typography>
+                        <br />
                         <Typography variant="body1">
                            On mobile devices, the editor menu can be accessed by tapping the menu icon at the top-left
                            corner of the screen.
