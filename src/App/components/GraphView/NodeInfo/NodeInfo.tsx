@@ -116,4 +116,4 @@ const NodeInfo: React.FC<NodeInfoProps> = (props) => {
    }
 };
 
-export default NodeInfo;
+export default React.memo(NodeInfo);

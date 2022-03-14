@@ -110,4 +110,4 @@ const MatrixDisplay: React.FunctionComponent<MatrixDisplayProps> = ({ title, nod
    );
 };
 
-export default MatrixDisplay;
+export default React.memo(MatrixDisplay);

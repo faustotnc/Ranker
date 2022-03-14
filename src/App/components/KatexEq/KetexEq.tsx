@@ -9,4 +9,4 @@ const KatexEq: React.FC<KatexEqProps> = ({ children }) => {
    return <span className="eq" dangerouslySetInnerHTML={{ __html: eq }} />;
 };
 
-export default KatexEq;
+export default React.memo(KatexEq);

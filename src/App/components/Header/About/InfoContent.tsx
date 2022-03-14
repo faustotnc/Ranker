@@ -34,7 +34,7 @@ const InfoContent: React.FunctionComponent<InfoContentProps> = () => {
             reasonable for it to display a link to a website that contains the definition of the word
             &quot;newspaper&quot; or a link to a website that points to many other newspapers. Although all of these
             options are equally valid, not all websites are equally important. With this in mind, two new questions
-            arise: how should the engine prioritize websites on the world-wide-web based on their rank or importance?
+            arise: how should the engine prioritize websites in the world-wide-web based on their rank or importance?
             And, what metrics can we use to define a website&apos;s rank?
          </Typography>
          <br />
@@ -165,7 +165,7 @@ const InfoContent: React.FunctionComponent<InfoContentProps> = () => {
          </div>
 
          <Typography variant="body2" component="p">
-            A couple of interesting details arise from the matrix representation of our PageRank network flow system:
+            A couple of interesting details arise from the matrix representation of our PageRank network-flow system:
          </Typography>
 
          <ol style={{ paddingLeft: "48px", paddingTop: "8px" }}>
@@ -198,8 +198,8 @@ const InfoContent: React.FunctionComponent<InfoContentProps> = () => {
             </li>
             <li>
                <Typography variant="body2" component="p">
-                  We know <KatexEq>{"r"}</KatexEq> is unit length, and each column of <KatexEq>{"M"}</KatexEq> sums to
-                  1, so <KatexEq>{"Mr\\leq 1"}</KatexEq>.
+                  Let <KatexEq>{"\\rho=Mr"}</KatexEq>, then <KatexEq>{"\\rho_j\\leq1"}</KatexEq> since we know that{" "}
+                  <KatexEq>{"r"}</KatexEq> is unit length and that each column of <KatexEq>{"M"}</KatexEq> sums to 1.
                </Typography>
             </li>
          </ol>

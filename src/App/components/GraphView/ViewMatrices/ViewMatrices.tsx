@@ -42,4 +42,4 @@ const ViewMatrices: React.FC<ViewMatricesProps> = ({ isOpen, network }) => {
    );
 };
 
-export default ViewMatrices;
+export default React.memo(ViewMatrices);

@@ -19,6 +19,7 @@
       "colormap": "^2.3.2",
       "cytoscape": "^3.21.0",
       "cytoscape-cola": "^2.5.1",
+      "cytoscape-dagre": "^2.4.0",
       "katex": "^0.15.2",
       "node-sass": "npm:sass@^1.49.9",
       "react": "^17.0.2",

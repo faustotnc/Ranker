@@ -3,6 +3,7 @@ import ColorMap from "colormap";
 import cytoscape from "cytoscape";
 // @ts-ignore
 import * as cola from "cytoscape-cola";
+// import * as cola from "cytoscape-dagre";
 
 cytoscape.use(cola);
 
