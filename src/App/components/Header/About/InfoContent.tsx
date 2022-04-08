@@ -1,5 +1,6 @@
 import { Box, Divider, Typography } from "@mui/material";
 import * as React from "react";
+import { ReactComponent as LimitationsGraph } from "../../../../limitations.svg";
 import { ReactComponent as ExampleGraph } from "../../../../web-graph.drawio.svg";
 import KatexEq from "../../KatexEq/KetexEq";
 
@@ -103,6 +104,7 @@ const InfoContent: React.FunctionComponent<InfoContentProps> = () => {
             outgoing links) of the <KatexEq>{"i"}</KatexEq>th website pointing to <KatexEq>{"j"}</KatexEq>. For
             concreteness, take the following graph:
          </Typography>
+         <br />
 
          <Box
             sx={{
@@ -113,6 +115,7 @@ const InfoContent: React.FunctionComponent<InfoContentProps> = () => {
          >
             <ExampleGraph></ExampleGraph>
          </Box>
+         <br />
 
          <Typography variant="body2" component="p">
             This graph produces a set of three rank equations and three unknowns:
@@ -233,7 +236,7 @@ const InfoContent: React.FunctionComponent<InfoContentProps> = () => {
 
          <Typography variant="body2" component="p" className="caption-text">
             Isn&apos;t this beautiful? Our entire system for finding the importance of a website boiled down to a series
-            of matrix-vector multiplications. Here is how this power-iteration loop looks like:
+            of matrix-vector multiplications. Here is how this power-iteration loop works:
          </Typography>
 
          <ol style={{ paddingLeft: "48px", paddingTop: "8px" }}>
@@ -270,6 +273,88 @@ const InfoContent: React.FunctionComponent<InfoContentProps> = () => {
             surfer being at any of the nodes at any point in time, i.e., the rank of each node in the graph.
          </Typography>
          <br />
+
+         <Typography variant="body2" component="p" className="caption-text">
+            You are welcome to try this out for yourself with the graph I introduced a while ago, either by hand or
+            using Ranker to help you. If you decide to use Ranker, pay close attention to vector{" "}
+            <KatexEq>{"r"}</KatexEq> displayed on the right-hand side of the screen on desktop devices.
+         </Typography>
+         <br />
+
+         <Typography variant="body2" component="p" className="caption-text">
+            (To be continued...)
+         </Typography>
+         <br />
+
+
+         {/* <Typography variant="h5">Limitations</Typography>
+         <br />
+         <Typography variant="body2" component="p" className="caption-text">
+            As I mentioned a while ago, a nice result of the matrix-vector form of our network-flow system of equations
+            is that the matrix <KatexEq>{"M"}</KatexEq> is column-stochastic. Or at least it should be. Consider the
+            following graph and its corresponding system of equations:
+         </Typography>
+         <br />
+
+         <Box
+            sx={{
+               display: "flex",
+               alignItems: "center",
+               "@media screen and (max-width: 712px)": { flexDirection: "column" },
+            }}
+         >
+            <Box
+               sx={{
+                  textAlign: "center",
+                  svg: { width: "75%", maxWidth: "350px" },
+                  "*": { color: "primary.main", stroke: (t) => t.palette.primary.main },
+               }}
+            >
+               <LimitationsGraph></LimitationsGraph>
+            </Box>
+
+            <Box
+               className="equation"
+               sx={{
+                  fontSize: "16px !important",
+               }}
+            >
+               <KatexEq>
+                  {
+                     "\\begin{bmatrix} r_a \\\\ r_b \\\\ r_c \\\\ r_d \\end{bmatrix} = \\begin{bmatrix} 0 & 0 & 0 & 0 \\\\ 1/3 & 0 & 1 & 0 \\\\ 1/3 & 1 & 0 & 0 \\\\ 1/3 & 0 & 0 & 0 \\end{bmatrix}\\begin{bmatrix} r_a \\\\ r_b \\\\ r_c \\\\ r_d \\end{bmatrix}"
+                  }
+               </KatexEq>
+            </Box>
+         </Box>
+         <br />
+
+         <Typography variant="body2" component="p" className="caption-text">
+            If you run the power iteration algorithm on this graph, you will notice some interesting results: nodes a
+            and d will end up with a rank of zero, while nodes b and c will each get 0.5 as their rank. Although this is
+            the correct result algorithmically speaking, it is not the result we expected intuitively. Nodes a and d
+            should have <i>some</i> rank since they exist in the graph, and nodes b and c should not hold all of the
+            rank, since they share the graph with other nodes. There are two issues with this graph based on our current
+            network-flow formulation:
+         </Typography>
+
+         <ol style={{ paddingLeft: "48px", paddingTop: "8px" }}>
+            <li>
+               <Typography variant="body2" component="p">
+                  <b>Dead-ends:</b> You may have noticed that the last column of M is all zeros. This is because the
+                  node d does not have any outgoing links, which is a <i>real</i> issue since it prevents our matrix
+                  from being &quot;true&quot; column-stochastic. Going with the same &quot;rank fluid&quot; analogy I
+                  mentioned earlier, having a dead-end in our graph is like having a hole in the network that sucks all
+                  of the fluid, eventually making all components of r become zero.
+               </Typography>
+            </li>
+            <li>
+               <Typography variant="body2" component="p">
+                  <b>Spider-traps:</b> This isn&apos;t really an issue, but if you apply the power iteration algorithm
+                  on a graph that has a spider trap, it runs the risk of either getting stuck on
+               </Typography>
+            </li>
+         </ol>
+         <br /> */}
 
          <Divider></Divider>
          <br />

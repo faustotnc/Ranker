@@ -70,7 +70,7 @@ const Header: React.FC<HeaderProps> = () => {
                   <img src={Logo} alt="Logo" className="logo" />
 
                   <Typography variant="h6" component="div" sx={{ flexGrow: 1 }} className="app-name">
-                     Ranker
+                     Ranker <sup>(beta)</sup>
                   </Typography>
 
                   <Box
@@ -79,7 +79,7 @@ const Header: React.FC<HeaderProps> = () => {
                   >
                      <IconButton
                         color="primary"
-                        className="no-mobile"
+                        className=""
                         onClick={() => setSharePopupIsOpen(true)}
                         ref={shareLinkAnchorEl}
                      >
@@ -88,7 +88,7 @@ const Header: React.FC<HeaderProps> = () => {
 
                      <IconButton
                         color="primary"
-                        className="no-mobile"
+                        className=""
                         href="https://github.com/faustotnc/Ranker"
                         target="_blank"
                      >
@@ -105,12 +105,16 @@ const Header: React.FC<HeaderProps> = () => {
                         size="small"
                         variant="contained"
                         disableElevation
-                        className="rounded add-node"
+                        className="rounded no-mobile"
                         startIcon={themeIcon}
                         onClick={() => dispatch(rotateTheme())}
                      >
                         {currentTheme}
                      </Button>
+
+                     <IconButton className="no-desktop" color="primary" onClick={() => dispatch(rotateTheme())}>
+                        {themeIcon}
+                     </IconButton>
                   </Box>
                </Toolbar>
             </Paper>

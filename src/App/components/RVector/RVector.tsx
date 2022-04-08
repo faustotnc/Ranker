@@ -28,7 +28,7 @@ const RVector: React.FC<RVectorProps> = () => {
                onClick={() => dispatch(setSelectedNode(p[0]))}
             >
                <Box className="cell-value" sx={{ color: color.fg, backgroundColor: color.bg }}>
-                  {+(p[1] * 100).toFixed(3)}
+                  {p[1].toFixed(3)}
                </Box>
                <span className="cell-name">{p[0]}</span>
             </Box>
